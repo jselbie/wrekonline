@@ -1,0 +1,20 @@
+<resources>
+
+	<!--
+        Base application theme for API 14+. This theme completely replaces
+        AppBaseTheme from BOTH res/values/styles.xml and
+        res/values-v11/styles.xml on API 14+ devices.
+	-->
+	
+	<style name="gradientActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+	     <item name="android:background">@drawable/gradient_actionbar</item>
+	</style>
+	
+	<style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+		<!-- API 14 theme customizations can go here. -->
+		
+		<item name="android:actionBarStyle">@style/gradientActionBar</item>
+		
+	</style>
+	
+</resources>

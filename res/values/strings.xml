@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">WREK Online</string>
+    <string name="app_name_full">WREK Online for Android</string>
+    <string name="action_settings">Settings</string>
+	<string name="action_about">About</string>
+	<string name="app_station_id">WREK Online</string>
+	<string name="show_logo">Show Logo</string>
+	<string name="downloading_schedule">Downloading schedule. . .</string>
+	<string name="play">Play</string>
+    <string name="stop">Stop</string>
+    <string name="pause">Pause</string>
+    
+    <string name="placeholder_short">Placeholder</string>
+    <string name="placeholder_long">A much longer placeholder text string</string>
+    
+    <string name="buttonPrevText">&lt;&lt;</string>
+    <string name="buttonNextText">&gt;&gt;</string>
+    
+    <string name="settingsActivityTitle">Settings</string>
+    <string name="settingsGeneralHeader">General</string>
+    <string name="settingsBitrateTitle">Streaming bitrate</string>
+    
+    <string name="aboutActivityTitle">About</string>
+    
+    <string name="bitrate_entry_automatic">Auto</string>
+    <string name="bitrate_entry_high">High (128 kbit/sec)</string>
+    <string name="bitrate_entry_low">Low (24 kbit/sec)</string>
+    
+    <string name="bitrate_value_automatic">0</string>
+    <string name="bitrate_value_high">1</string>
+    <string name="bitrate_value_low">2</string>
+    
+    <string name="bitrate_summary_automatic">Auto - While on Wifi, stream audio at a high quality bitrate. When on a cellular connection, stream at a lower bitrate.</string>
+    <string name="bitrate_summary_high">High (128 kbit/sec)</string>
+    <string name="bitrate_summary_low">Low (24 kbit/sec)</string>
+    
+    <string name="about_wrek">WREK is the entirely student managed, operated and engineered radio station at Georgia Tech in Atlanta.\n\nWREK broadcasts 24/7 from the Georgia Student Center on 91.1 FM with 100,000 watts throughout Atlanta in addition to streaming online with a 14-day archive.\n\nWREK has been broadcasting since March 25th, 1968. Since then, names, faces, and clothing fashions may have changed, but the station-wide philosophy of providing diverse, quality programming to the Atlanta area and the world at large has remained unwavering.\n\nIn 1994, WREK became one of the first radio stations to stream its air signal over the Internet.</string>
+    <string name="for_android">for Android</string>
+    <string name="dev_by">Developed by: John Selbie</string>
+    <string name="feedback_email">Feedback: wrekonline@selbie.com</string>
+    	
+	<color name="black">#FF000000</color>
+	<color name="white">#FFFFFFFF</color>
+
+
+</resources>
