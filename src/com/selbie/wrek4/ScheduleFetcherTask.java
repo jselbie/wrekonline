@@ -38,14 +38,14 @@ public class ScheduleFetcherTask extends AsyncTask<Void, Integer, ArrayList<Sche
             _callback.onComplete(schedule);
         }
     }
-
+    
     @Override
     protected ArrayList<ScheduleItem> doInBackground(Void... arg0)
     {
         int attemptcount = 0;
         boolean success = false;
         ArrayList<ScheduleItem> schedule = null;
-
+        
         while ((attemptcount < MAX_ATTEMPTS) && (this.isCancelled() == false) && (success == false))
         {
             try
@@ -57,6 +57,7 @@ public class ScheduleFetcherTask extends AsyncTask<Void, Integer, ArrayList<Sche
                 Log.d(TAG, "Attempting parse");
                 JsonHandler handler = new JsonHandler();
                 schedule = handler.ExtractScheduleFromJson(json);
+                
                 break;
             }
             catch (IOException e)

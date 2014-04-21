@@ -12,7 +12,7 @@ import android.os.IBinder;
 public class MediaPlayerService extends Service
 {
     MediaPlayerPresenter _presenter;
-    
+    ScheduleFetcher _fetcher;
     
     public static void StartService(Context context)
     {
@@ -81,7 +81,9 @@ public class MediaPlayerService extends Service
     {
         if (_presenter == null)
         {
+            // persist a few of our important singletons within the server so they don't get garbage collected out
             _presenter = MediaPlayerPresenter.getInstance();
+            _fetcher = ScheduleFetcher.getInstance();
         }
         
         startForegroundHelper();

@@ -6,8 +6,8 @@
 	<ListView android:id="@id/android:list" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="0dp" />
 
 	<LinearLayout android:id="@id/android:empty" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_centerInParent="true" android:orientation="vertical" android:gravity="center"> 	
-        <ProgressBar android:layout_width="wrap_content" android:layout_height="wrap_content" style="?android:attr/progressBarStyleLarge" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/downloading_schedule" android:gravity="center"></TextView>
+        <ProgressBar android:id="@+id/spinner"   android:layout_width="wrap_content" android:layout_height="wrap_content" style="?android:attr/progressBarStyleLarge" />
+        <TextView    android:id="@+id/spinnerText"  android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/downloading_schedule" android:gravity="center"></TextView>
     </LinearLayout>
     
 </RelativeLayout>

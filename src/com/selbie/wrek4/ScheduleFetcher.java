@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 
+import android.util.Log;
+
 public class ScheduleFetcher implements ScheduleFetcherTask.ScheduleFetcherTaskCallback
 {
+    public final static String TAG = ScheduleFetcher.class.getSimpleName();
 
     // public constants --------------------------------
     public interface ScheduleFetcherCallback
     {
         void onNewSchedule(ArrayList<ScheduleItem> schedule);
+        void onScheduleDownloadError(int errorcode);
     }
     
     public static final long SECONDS_IN_HOUR = 60 * 60;
@@ -31,13 +35,13 @@ public class ScheduleFetcher implements ScheduleFetcherTask.ScheduleFetcherTaskC
         _downloadInProgress = false;
 
         _lastUpdate = Calendar.getInstance();
-        _lastUpdate.setTimeInMillis(0);
+        _lastUpdate.setTimeInMillis(0); // set timestamp to the epoch so we're guaranteed to get a refresh the next time getInstance is called
 
         _latest = new ArrayList<ScheduleItem>(); // empty list
         _observerSet = new HashSet<ScheduleFetcherCallback>();
     }
     
-    public ScheduleFetcher getInstance()
+    public static ScheduleFetcher getInstance()
     {
         if (_instance == null)
         {
@@ -70,7 +74,7 @@ public class ScheduleFetcher implements ScheduleFetcherTask.ScheduleFetcherTaskC
     }
     
     @SuppressWarnings("unchecked")
-    public void notifyObservers()
+    public void notifyObservers(boolean success)
     {
         // iterate over the clone in case one observer takes another one out in the callback
         // this is probably overkill
@@ -79,7 +83,14 @@ public class ScheduleFetcher implements ScheduleFetcherTask.ScheduleFetcherTaskC
         {
             if (_observerSet.contains(callback))
             {
-                callback.onNewSchedule(_latest);
+                if (success)
+                {
+                    callback.onNewSchedule(_latest);
+                }
+                else
+                {
+                    callback.onScheduleDownloadError(0);
+                }
             }
         }
     }
@@ -102,10 +113,23 @@ public class ScheduleFetcher implements ScheduleFetcherTask.ScheduleFetcherTaskC
     public void onComplete(ArrayList<ScheduleItem> schedule)
     {
         _downloadInProgress = false;
-        _latest = schedule;
-        _lastUpdate = Calendar.getInstance();
+        
+        if (schedule == null) {
+            
+            // uh oh... error!
+            
+            Log.e(TAG, "ScheduleFetcherTask has failed to deliver a schedule");
+            Log.e(TAG, "Returning a stale schedule!");
+            
+            notifyObservers(false);
+        }
 
-        notifyObservers();
+        if (schedule != null) {
+            _latest = schedule;
+            _lastUpdate = Calendar.getInstance();
+            notifyObservers(true);
+        }
+
     }
     
     boolean isRefreshNeeded()
