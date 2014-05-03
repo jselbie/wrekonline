@@ -1,29 +1,37 @@
 package com.selbie.wrek4;
 
 import android.app.Fragment;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class PlayControlFragment extends Fragment implements MediaPlayerView
 {
+    public final static String TAG = PlayControlFragment.class.getSimpleName();
 
     private MediaPlayerPresenter _presenter;
     private SeekBar _seekbar;
-    private Button _playbutton;
-    private Button _nextbutton;
-    private Button _prevbutton;
+    private boolean _seekbarIsAdjusting; // true if the user has his finger on the seekbar
+    private ImageButton _playbutton;
+    private ImageButton _nextbutton;
+    private ImageButton _prevbutton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.media_player, parent, false);
+        Log.d(TAG, "onCreateView");
+        
+        View view = inflater.inflate(R.layout.media_player2, parent, false);
+        
+        _seekbarIsAdjusting = false;
 
         return view;
     }
@@ -33,13 +41,15 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     {
         super.onStart();
 
-        _presenter = MediaPlayerPresenter.getInstance();
-        _presenter.attachView(this);
 
         _seekbar = (SeekBar) (getView().findViewById(R.id.seekBar));
-        _playbutton = (Button) (getView().findViewById(R.id.buttonPlayStop));
-        _prevbutton = (Button) (getView().findViewById(R.id.buttonPrev));
-        _nextbutton = (Button) (getView().findViewById(R.id.buttonNext));
+        _playbutton = (ImageButton) (getView().findViewById(R.id.buttonPlayStop));
+        _prevbutton = (ImageButton) (getView().findViewById(R.id.buttonPrev));
+        _nextbutton = (ImageButton) (getView().findViewById(R.id.buttonNext));
+        
+        _presenter = MediaPlayerPresenter.getInstance();
+        _presenter.attachView(this);
+        
 
         _seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
         {
@@ -52,11 +62,13 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
             @Override
             public void onStartTrackingTouch(SeekBar arg0)
             {
+                _seekbarIsAdjusting = true;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekbar)
             {
+                _seekbarIsAdjusting = false;
                 int position = seekbar.getProgress();
                 _presenter.onSeek(position);
             }
@@ -68,10 +80,15 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
             @Override
             public void onClick(View arg0)
             {
-                String strPlay = getActivity().getResources().getString(R.string.play);
-                String currentButtonText = _playbutton.getText().toString();
-
-                if (currentButtonText.equals(strPlay))
+                Integer tagint = (Integer)_playbutton.getTag(R.string.playpause_tag);
+                
+                if (tagint == null)
+                {
+                    Log.e(TAG, "No tag on the play/pause button!!!!");
+                    return;
+                }
+                
+                if (tagint.intValue() == R.drawable.play_button)
                 {
                     _presenter.onPlay();
                 }
@@ -120,40 +137,50 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     {
 
         boolean enabled = ((state == MainButtonState.PauseButtonEnabled) || (state == MainButtonState.PlayButtonEnabled));
-        Button btn = (Button) (getView().findViewById(R.id.buttonPlayStop));
-        btn.setEnabled(enabled);
+        ImageButton btn = (ImageButton) (getView().findViewById(R.id.buttonPlayStop));
+        int resid = R.drawable.play_button;
 
         if ((state == MainButtonState.PauseButtonEnabled) || (state == MainButtonState.PauseButtonDisabled))
         {
-            btn.setText(R.string.pause);
+            resid = R.drawable.pause_button;
         }
-        else
-        {
-            btn.setText(R.string.play);
-        }
+        
+        btn.setEnabled(enabled);
+        Drawable img = (Drawable)getResources().getDrawable(resid);
+        btn.setImageDrawable(img);
+        
+        // hack - tag the button so we know whether it's in the play or pause state
+        Integer taginteger = Integer.valueOf(resid);
+        btn.setTag(R.string.playpause_tag, taginteger);
+        
+    }
+    
+    String getTimeString(int position, int duration)
+    {
+        return "";
+        
     }
 
     @Override
     public void setSeekBarEnabled(boolean enabled, int duration, int position)
     {
-        // TODO Auto-generated method stub
 
         SeekBar seekbar = (SeekBar) (getView().findViewById(R.id.seekBar));
         seekbar.setEnabled(enabled);
         seekbar.setMax(duration);
-        seekbar.setProgress(position);
+        
+        // don't move the seekbar position if the user is actively moving it with his finger
+        if (_seekbarIsAdjusting == false)
+        {
+            seekbar.setProgress(position);
+        }
     }
 
     @Override
     public void setTrackButtonsEnabled(boolean prevEnabled, boolean nextEnabled)
     {
-        // TODO Auto-generated method stub
-
-        Button btn = (Button) (getView().findViewById(R.id.buttonPrev));
-        btn.setEnabled(prevEnabled);
-
-        btn = (Button) (getView().findViewById(R.id.buttonNext));
-        btn.setEnabled(nextEnabled);
+        _prevbutton.setEnabled(prevEnabled);
+        _nextbutton.setEnabled(nextEnabled);
     }
 
     @Override

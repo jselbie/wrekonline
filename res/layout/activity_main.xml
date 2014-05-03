@@ -5,9 +5,10 @@
 	android:orientation="vertical"
 	tools:context=".MainActivity" >
 
-			
+	<!-- 		
     <ImageView android:src="@drawable/barslice" android:scaleType="fitXY" android:layout_width="match_parent" android:layout_height="20dp" />
-    
+     -->
+     
     <fragment
         android:id="@+id/frag1"
         android:name="com.selbie.wrek4.ScheduleListFragment"
@@ -20,7 +21,7 @@
         android:id="@+id/fragPlayControl"
         android:name="com.selbie.wrek4.PlayControlFragment"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        tools:layout="@layout/media_player" />
+        android:layout_height="wrap_content"
+        tools:layout="@layout/media_player2" />
     
 </LinearLayout>

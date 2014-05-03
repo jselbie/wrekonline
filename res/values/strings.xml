@@ -43,6 +43,9 @@
     <string name="dev_by">Developed by: John Selbie</string>
     <string name="feedback_email">Feedback: wrekonline@selbie.com</string>
     
+    <string name="playpause_tag">playpause_tag</string>
+       
+    
     
     	
 	<color name="black">#FF000000</color>
