@@ -13,8 +13,7 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> 
 {
-
-    Activity _activity;
+    private Activity _activity;
     
     public ScheduleListAdapter(Activity activity,  ArrayList<ScheduleItem> items)
     {
@@ -38,18 +37,7 @@ class ScheduleListAdapter extends ArrayAdapter<ScheduleItem>
         ((TextView)view.findViewById(R.id.tvShowTime)).setText(item.getTime());
 
         ImageView iv = (ImageView)view.findViewById(R.id.showLogo);
-        
-        
-        
-
-        if (item.getLogoURL().equals("local.onair"))
-        {
-            iv.setImageResource(R.drawable.onair);
-        }
-        else
-        {
-            UrlImageViewHelper.setUrlDrawable(iv,  item.getLogoURL());
-        }
+        UrlImageViewHelper.setUrlDrawable(iv, item.getLogoURL());
         
         return view;
     }

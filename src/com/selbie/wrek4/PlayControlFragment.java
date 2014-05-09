@@ -1,5 +1,6 @@
 package com.selbie.wrek4;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
 
     private MediaPlayerPresenter _presenter;
     private SeekBar _seekbar;
+    private TextView _timestamp;
     private boolean _seekbarIsAdjusting; // true if the user has his finger on the seekbar
     private ImageButton _playbutton;
     private ImageButton _nextbutton;
@@ -46,6 +48,7 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         _playbutton = (ImageButton) (getView().findViewById(R.id.buttonPlayStop));
         _prevbutton = (ImageButton) (getView().findViewById(R.id.buttonPrev));
         _nextbutton = (ImageButton) (getView().findViewById(R.id.buttonNext));
+        _timestamp = (TextView)(getView().findViewById(R.id.timestamp));
         
         _presenter = MediaPlayerPresenter.getInstance();
         _presenter.attachView(this);
@@ -55,12 +58,16 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         {
 
             @Override
-            public void onProgressChanged(SeekBar arg0, int position, boolean fromUser)
+            public void onProgressChanged(SeekBar seekbar, int position, boolean fromUser)
             {
+                if (fromUser)
+                {
+                    PlayControlFragment.this.updateTimestamp(seekbar.getMax(), position);
+                }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar arg0)
+            public void onStartTrackingTouch(SeekBar seekbar)
             {
                 _seekbarIsAdjusting = true;
             }
@@ -128,7 +135,7 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
 
         if (_presenter != null)
         {
-            _presenter.detachView();
+            _presenter.detachView(this);
         }
     }
 
@@ -155,25 +162,35 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         
     }
     
-    String getTimeString(int position, int duration)
+    @SuppressLint("DefaultLocale")
+    static String millisecondsToTime(int milliseconds)
     {
-        return "";
-        
+        int seconds = milliseconds / 1000;
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+    
+    void updateTimestamp(int duration, int position)
+    {
+        _timestamp.setText(millisecondsToTime(position) + " / " + millisecondsToTime(duration));
     }
 
     @Override
     public void setSeekBarEnabled(boolean enabled, int duration, int position)
     {
 
-        SeekBar seekbar = (SeekBar) (getView().findViewById(R.id.seekBar));
-        seekbar.setEnabled(enabled);
-        seekbar.setMax(duration);
+        _seekbar.setEnabled(enabled);
+        _seekbar.setMax(duration);
+        _timestamp.setEnabled(enabled);
         
         // don't move the seekbar position if the user is actively moving it with his finger
         if (_seekbarIsAdjusting == false)
         {
-            seekbar.setProgress(position);
+            _seekbar.setProgress(position);
+            updateTimestamp(duration, position);
         }
+        
     }
 
     @Override
@@ -186,8 +203,6 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     @Override
     public void setDisplayString(String message)
     {
-        // TODO Auto-generated method stub
-
         TextView tv = (TextView) getView().findViewById(R.id.tvNowPlaying);
         tv.setText(message);
     }

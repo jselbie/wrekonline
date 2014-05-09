@@ -45,7 +45,12 @@ public class ScheduleFetcher implements ScheduleFetcherTask.ScheduleFetcherTaskC
     {
         if (_instance == null)
         {
+            Log.d(TAG, "getInstance - returning new instance");
             _instance = new ScheduleFetcher();
+        }
+        else
+        {
+            Log.d(TAG, "getInstance - returning existing instance");
         }
         
         return _instance;

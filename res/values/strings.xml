@@ -39,12 +39,24 @@
     <string name="bitrate_summary_low">Low (24 kbit/sec)</string>
     
     <string name="about_wrek">WREK is the entirely student managed, operated and engineered radio station at Georgia Tech in Atlanta.\n\nWREK broadcasts 24/7 from the Georgia Student Center on 91.1 FM with 100,000 watts throughout Atlanta in addition to streaming online with a 14-day archive.\n\nWREK has been broadcasting since March 25th, 1968. Since then, names, faces, and clothing fashions may have changed, but the station-wide philosophy of providing diverse, quality programming to the Atlanta area and the world at large has remained unwavering.\n\nIn 1994, WREK became one of the first radio stations to stream its air signal over the Internet.</string>
-    <string name="for_android">for Android</string>
+    <string name="for_android">WREK Online for Android</string>
     <string name="dev_by">Developed by: John Selbie</string>
-    <string name="feedback_email">Feedback: wrekonline@selbie.com</string>
+    <string name="feedback_email">Feedback: apps@selbie.com</string>
     
     <string name="playpause_tag">playpause_tag</string>
+    
+    <string name="placeholder_timestamp">3:45 / 30:00</string>
        
+    <string name="image">image</string>
+    
+    <string name="wrek_copyright">The primary content of this application including streamed audio, station emblems, logos, and show descriptions are copyright WREK Atlanta and the Georgia Institute of Technology.</string>
+    
+    <string name="ibiquity_copyright">HD Radio logo is a registered trademarks of iBiquity Digital Corporation. iBiquity is making these logos and materials available to licensed broadcasters for the sole purpose of promoting licensed HD Radio stations or technology.  By downloading one of these logos or materials, you are agreeing to 1) use the downloaded item solely for the promotion of licensed HD Radio stations or technology; 2) not change the downloaded item in any way; and 3) not use the downloaded item in association with any disparagement of iBiquity, HD Radio technology, or the HD Digital Radio Alliance, or in a way that would diminish or otherwise damage.</string>
+    
+    <string name="urlimageviewhelper">UrlImageViewHelper</string>
+    <string name="apache_dutta">This software application makes use of open source software code. Credits are as follows:\n\nUrlImageViewHelper\nCopyright 2012 Koushik Dutta\n\nLicensed under the Apache License, Version 2.0 (the "License");you may not use this file except in compliance with the License. You may obtain a copy of the License at\n\n
+       http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+    </string>
     
     
     	

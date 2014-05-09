@@ -1,34 +1,82 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:background="@drawable/gradient_actionbar"
-    >
+    android:orientation="vertical" >
 
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FF000000" />
-    
-    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
-        <TextView android:id="@+id/tvNowPlaying" android:layout_width="wrap_content" android:layout_height="wrap_content"  android:text="Now Playing" android:textColor="#ffffffff"  android:layout_gravity="center"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FF000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tvNowPlaying"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Now Playing"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FF000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+         >
+
+        <ImageButton
+            android:id="@+id/buttonPrev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:padding="0dp"
+            android:src="@drawable/prev_button" />
+
+        <ImageButton
+            android:id="@+id/buttonPlayStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:padding="0dp"
+            android:src="@drawable/play_button" />
+
+        <ImageButton
+            android:id="@+id/buttonNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:padding="0dp"
+            android:src="@drawable/next_button" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1" />
     </LinearLayout>
     
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FF000000" />
+    <TextView
+            android:id="@+id/timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/timestamp_selector"
+            android:layout_gravity="right"
+            android:layout_marginRight="15dp"
+            android:text="@string/placeholder_timestamp" />
+             
     
-    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingBottom="12dp" >
-        
-        <ImageButton android:id="@+id/buttonPrev"     android:layout_width="wrap_content"  android:layout_height="wrap_content" android:src="@drawable/prev_button" android:padding="0dp" android:background="#00000000"  />
-        
-        <ImageButton android:id="@+id/buttonPlayStop" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:src="@drawable/play_button" android:padding="0dp" android:background="#00000000" />
-        
-        <ImageButton android:id="@+id/buttonNext"     android:layout_width="wrap_content"  android:layout_height="wrap_content" android:src="@drawable/next_button" android:padding="0dp" android:background="#00000000"  />
-        
-        <SeekBar android:id="@+id/seekBar" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginLeft="10dp" android:layout_gravity="center_vertical" /> 
-        
-    </LinearLayout>
-
-
- 
 </LinearLayout>
-
- 
- 

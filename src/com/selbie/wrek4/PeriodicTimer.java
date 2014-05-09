@@ -59,6 +59,7 @@ public class PeriodicTimer
         if (_handler != null)
         {
             _handler.removeCallbacksAndMessages(null);
+            _handler = null;
         }
 
         _isStarted = false;
@@ -91,7 +92,7 @@ public class PeriodicTimer
 
         // recheck the handler even if we aren't a one shot - Stop may have been
         // called in the callback
-        if ((_handler != null) && (_oneshot == false))
+        if ((_handler != null) && (_oneshot == false) && _isStarted)
         {
             // reschedule for the next period
             _handler.postAtTime(_runnable, android.os.SystemClock.uptimeMillis() + _intervalMilliseconds);

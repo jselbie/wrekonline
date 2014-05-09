@@ -31,18 +31,18 @@ public class MediaPlayerPresenter
     // View_Seek
     // }
 
-    MediaPlayer _player;
-    PlayerState _state;
+    private MediaPlayer _player;
+    private PlayerState _state;
 
-    ArrayList<String> _playlist; // list of tracks
-    int _playlistIndex; // which track is "active"
+    private ArrayList<String> _playlist; // list of tracks
+    private int _playlistIndex; // which track is "active"
 
-    boolean _isLiveSource;
-    MediaPlayerView _view;
-    PeriodicTimer _timer;
-    String _title;
+    private boolean _isLiveSource;
+    private MediaPlayerView _view;
+    private PeriodicTimer _timer;
+    private String _title;
 
-    static MediaPlayerPresenter _staticInstance;
+    private static MediaPlayerPresenter _staticInstance;
 
     public MediaPlayerPresenter()
     {
@@ -67,7 +67,7 @@ public class MediaPlayerPresenter
         return _staticInstance;
     }
 
-    void addCallbacksToPlayer()
+    private void addCallbacksToPlayer()
     {
         _player.setOnPreparedListener(new OnPreparedListener()
         {
@@ -115,12 +115,12 @@ public class MediaPlayerPresenter
 
     }
 
-    MediaPlayer createMediaPlayer()
+    private MediaPlayer createMediaPlayer()
     {
         return new MediaPlayer();
     }
 
-    void destroyPlayer()
+    private void destroyPlayer()
     {
         if (_player != null)
         {
@@ -133,26 +133,33 @@ public class MediaPlayerPresenter
         }
     }
 
-    void attachView(MediaPlayerView view)
+    public void attachView(MediaPlayerView view)
     {
+        Log.d(TAG, "attachView");
         // immediate turnaround and tell this view how to display itself
         _view = view;
         updateView();
     }
 
-    void detachView()
+    public void detachView(MediaPlayerView view)
     {
-        stopSeekbarUpdateTimer();
-        _view = null;
+        Log.d(TAG, "detachView");
+        
+        if (_view == view)
+        {
+            stopSeekbarUpdateTimer();
+            _view = null;
+        }
     }
+    
 
     public void reset()
     {
-        detachView();
+        detachView(_view);
         destroyPlayer();
     }
 
-    boolean restartPlayer()
+    private boolean restartPlayer()
     {
         boolean success = false;
 
@@ -227,7 +234,7 @@ public class MediaPlayerPresenter
         return restartPlayer();
     }
 
-    boolean canIncrementPlayListIndex()
+    private boolean canIncrementPlayListIndex()
     {
         int next = _playlistIndex + 1;
 
@@ -238,7 +245,7 @@ public class MediaPlayerPresenter
         return true;
     }
 
-    boolean canDecrementPlayListIndex()
+    private boolean canDecrementPlayListIndex()
     {
         int prev = _playlistIndex - 1;
 
@@ -249,7 +256,7 @@ public class MediaPlayerPresenter
         return true;
     }
 
-    boolean incrementPlayListIndex()
+    private boolean incrementPlayListIndex()
     {
         boolean canIncrement = canIncrementPlayListIndex();
         if (canIncrement)
@@ -259,7 +266,7 @@ public class MediaPlayerPresenter
         return canIncrement;
     }
 
-    boolean decrementPlayListIndex()
+    private boolean decrementPlayListIndex()
     {
         boolean canDecrement = canDecrementPlayListIndex();
         if (canDecrement)
@@ -271,7 +278,6 @@ public class MediaPlayerPresenter
 
     public boolean isPlaying()
     {
-
         boolean result = ((_player != null) && (_state == PlayerState.Started));
         return result;
     }
@@ -342,7 +348,7 @@ public class MediaPlayerPresenter
     // -------------------------------------------------------------------------------
 
     // player callbacks
-    void onPrepared()
+    private void onPrepared()
     {
         if (_state == PlayerState.Preparing)
         {
@@ -352,7 +358,7 @@ public class MediaPlayerPresenter
         }
     }
 
-    boolean onError(int what, int extra)
+    private boolean onError(int what, int extra)
     {
         Log.e(TAG, "onError event.  what=" + what + " extra=" + extra);
 
@@ -364,7 +370,7 @@ public class MediaPlayerPresenter
         return true;
     }
 
-    void onCompletion()
+    private void onCompletion()
     {
         Log.d(TAG, "onCompletion event");
 
@@ -388,7 +394,7 @@ public class MediaPlayerPresenter
 
     // -------------------------------------------------------------------------------
 
-    void updateSeekbarView()
+    private void updateSeekbarView()
     {
 
         boolean seekBarEnabled = ((_state == PlayerState.Started) || (_state == PlayerState.Paused) || (_state == PlayerState.PlaybackComplete));
@@ -413,7 +419,7 @@ public class MediaPlayerPresenter
         }
     }
 
-    String getDisplayMessage()
+    private String getDisplayMessage()
     {
         String message = "";
         String postfix = "";
@@ -442,7 +448,7 @@ public class MediaPlayerPresenter
         return message + postfix;
     }
 
-    void updateView()
+    private void updateView()
     {
         MediaPlayerView.MainButtonState mainButtonState = MediaPlayerView.MainButtonState.PlayButtonEnabled;
         boolean seekBarEnabled = false;
@@ -551,7 +557,7 @@ public class MediaPlayerPresenter
         }
     }
 
-    void stopSeekbarUpdateTimer()
+    private void stopSeekbarUpdateTimer()
     {
         if (_timer != null)
         {
@@ -560,7 +566,7 @@ public class MediaPlayerPresenter
         }
     }
 
-    void startSeekbarUpdateTimer()
+    private void startSeekbarUpdateTimer()
     {
 
         if ((_timer != null) && _timer.isStarted())

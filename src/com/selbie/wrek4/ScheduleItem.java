@@ -69,34 +69,30 @@ public class ScheduleItem
     Stream getStreamForAllowedBitrate(int kbps)
     {
         Stream bestStream = null;
-        Stream lowestStream = null;
-        int lowest = Integer.MAX_VALUE;
         int best = 0;
+        int current = Integer.MAX_VALUE;
         
         for (Stream s : _streams)
         {
-            if ((lowestStream == null) || (s.getBitrate() < lowest))
-            {
-                lowestStream = s;
-                lowest = s.getBitrate();
-            }
+            current = s.getBitrate();
             
-            if (s.getBitrate() <= kbps)
+            if (bestStream == null)
             {
-                if ((bestStream == null) || (s.getBitrate() > best))
-                {
-                    bestStream = s;
-                    best = s.getBitrate();
-                }
+                bestStream = s;
+                best = current;
+            }
+            else if ((best > kbps) && (current < best))
+            {
+                bestStream = s;
+                best = current;
+            }
+            else if ((best < kbps) && (current > best) && (current <= kbps))
+            {
+                bestStream = s;
+                best = current;
             }
         }
 
-        // if we didn't find a stream that was under the target bitrate, just return the lowest bitrate stream available
-        if (bestStream == null)
-        {
-            bestStream = lowestStream;
-        }
-        
         return bestStream;
     }
     

@@ -25,7 +25,7 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
     private static final int BITRATE_HIGH_KBIT_SEC = 128;
     private static final int BITRATE_LOW_KBIT_SEC = 24;
 
-    ArrayList<ScheduleItem> _list;
+    private ArrayList<ScheduleItem> _list;
 
 
     @Override
@@ -100,7 +100,7 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
         }
     }
     
-    void configureSpinnerControl(boolean spinning)
+    private void configureSpinnerControl(boolean spinning)
     {
         View view = getView();
         
@@ -123,12 +123,8 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
             tv.setText(R.string.downloading_schedule_error);
             progbar.setVisibility(View.GONE);
         }
-        
     }
     
-
-
-
     @Override
     public void onListItemClick(ListView listview, View view, int position, long id)
     {
@@ -149,9 +145,8 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
     }
 
     @TargetApi(16)
-    int getTargetBitrate()
+    private int getTargetBitrate()
     {
-
         ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Activity.CONNECTIVITY_SERVICE);
 
         boolean isMetered = false;
@@ -159,19 +154,19 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
         boolean isEthernet = false;
         int result = 0;
 
-        int bandwidth_settings = SettingsActivity.getBitrateSetting(getActivity());
+        int bandwidth_settings = SettingsFragment.getBitrateSetting(getActivity());
 
         switch (bandwidth_settings)
         {
 
-            case SettingsActivity.BITRATE_SETTINGS_HIGH:
+            case SettingsFragment.BITRATE_SETTINGS_HIGH:
             {
                 Log.d(TAG, "Using high bitrate settings");
                 result = BITRATE_HIGH_KBIT_SEC;
                 break;
             }
     
-            case SettingsActivity.BITRATE_SETTINGS_LOW:
+            case SettingsFragment.BITRATE_SETTINGS_LOW:
             {
                 Log.d(TAG, "Using low bitrate settings");
                 result = BITRATE_LOW_KBIT_SEC;
@@ -187,7 +182,6 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
 
         if (result == 0)
         {
-
             // default to low-bitrate unless we specifically detect we are on a
             // non-mobile connection
             result = BITRATE_LOW_KBIT_SEC;
@@ -221,7 +215,4 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
 
         return result;
     }
-
-
-
 }
