@@ -140,7 +140,7 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     }
 
     @Override
-    public void SetMainButtonState(MainButtonState state)
+    public void setMainButtonState(MainButtonState state)
     {
 
         boolean enabled = ((state == MainButtonState.PauseButtonEnabled) || (state == MainButtonState.PlayButtonEnabled));

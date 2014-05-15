@@ -13,17 +13,24 @@ public class MediaPlayerService extends Service
 {
     MediaPlayerPresenter _presenter;
     ScheduleFetcher _fetcher;
-
-    public static void StartService(Context context)
+    
+    static Context _context;
+    
+    public static void setContext(Context context)
     {
-        Intent intent = new Intent(context, MediaPlayerService.class);
-        context.startService(intent);
+        _context = context;
     }
 
-    public static void StopService(Context context)
+    public static void StartService()
     {
-        Intent intent = new Intent(context, MediaPlayerService.class);
-        context.stopService(intent);
+        Intent intent = new Intent(_context, MediaPlayerService.class);
+        _context.startService(intent);
+    }
+
+    public static void StopService()
+    {
+        Intent intent = new Intent(_context, MediaPlayerService.class);
+        _context.stopService(intent);
     }
 
     public final static String TAG = MediaPlayerService.class.getSimpleName();

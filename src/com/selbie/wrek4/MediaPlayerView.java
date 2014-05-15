@@ -8,7 +8,7 @@ public interface MediaPlayerView
         PlayButtonEnabled, PauseButtonEnabled, PlayButtonDisabled, PauseButtonDisabled
     }
 
-    void SetMainButtonState(MainButtonState state);
+    void setMainButtonState(MainButtonState state);
 
     void setSeekBarEnabled(boolean enabled, int duration, int position);
 

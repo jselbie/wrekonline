@@ -458,6 +458,10 @@ public class MediaPlayerPresenter
         boolean trackButtonsEnabled = false;
         boolean prevButtonEnabled = false;
         boolean nextButtonEnabled = false;
+        
+        boolean startService = false;
+        boolean stopService = false;
+        
 
         if (_view == null)
         {
@@ -469,6 +473,7 @@ public class MediaPlayerPresenter
         case Idle:
         {
             mainButtonState = isEmptyUrl ? MediaPlayerView.MainButtonState.PlayButtonDisabled : MediaPlayerView.MainButtonState.PlayButtonEnabled;
+            stopService = true;
             break;
         }
 
@@ -481,12 +486,14 @@ public class MediaPlayerPresenter
         case Preparing:
         {
             mainButtonState = MediaPlayerView.MainButtonState.PauseButtonEnabled;
+            startService = true;
             break;
         }
 
         case Prepared:
         {
             mainButtonState = MediaPlayerView.MainButtonState.PauseButtonEnabled;
+            startService = true;
             break;
         }
 
@@ -498,6 +505,7 @@ public class MediaPlayerPresenter
             // for now, we'll only enable the prev/next buttons when we are
             // actually playing or paused (Consistent with seekbar)
             trackButtonsEnabled = true;
+            startService = true;
 
             break;
         }
@@ -509,12 +517,15 @@ public class MediaPlayerPresenter
             // for now, we'll only enable the prev/next buttons when we are
             // actually playing or paused (Consistent with seekbar)
             trackButtonsEnabled = true;
+            stopService = true;
+            
             break;
         }
 
         case Stopped:
         {
             mainButtonState = MediaPlayerView.MainButtonState.PlayButtonEnabled;
+            stopService = true;
             break;
         }
 
@@ -522,11 +533,13 @@ public class MediaPlayerPresenter
         {
             mainButtonState = MediaPlayerView.MainButtonState.PlayButtonEnabled;
             seekBarEnabled = true;
+            stopService = true;
             break;
         }
 
         case Error:
             mainButtonState = MediaPlayerView.MainButtonState.PlayButtonEnabled;
+            stopService = true;
             break;
 
         default:
@@ -538,7 +551,7 @@ public class MediaPlayerPresenter
 
         if (_view != null)
         {
-            _view.SetMainButtonState(mainButtonState);
+            _view.setMainButtonState(mainButtonState);
             _view.setSeekBarEnabled(seekBarEnabled, duration, position);
             _view.setTrackButtonsEnabled(prevButtonEnabled, nextButtonEnabled);
             _view.setDisplayString(getDisplayMessage());
@@ -555,6 +568,16 @@ public class MediaPlayerPresenter
         {
             stopSeekbarUpdateTimer();
         }
+        
+        if (stopService == true)
+        {
+            MediaPlayerService.StopService();
+        }
+        else if (startService == true)
+        {
+            MediaPlayerService.StartService();
+        }
+        
     }
 
     private void stopSeekbarUpdateTimer()

@@ -37,7 +37,7 @@ public class MainActivity extends Activity
         // load up our preferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         
-        MediaPlayerService.StartService(this);
+        MediaPlayerService.setContext(this.getApplicationContext());
     }
     
     @Override
@@ -67,12 +67,6 @@ public class MainActivity extends Activity
     protected void onStop()
     {
         super.onStop();
-        
-        if (MediaPlayerPresenter.getInstance().isPlaying() == false)
-        {
-            MediaPlayerPresenter.getInstance().reset();
-            MediaPlayerService.StopService(this);
-        }
     }
     
 }
