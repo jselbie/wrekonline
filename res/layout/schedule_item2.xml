@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -12,9 +13,9 @@
 	                  android:gravity="center_vertical"
 	                  android:orientation="vertical" >
 	
-	        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvTitle"   android:textSize="@dimen/show_title_height" android:text="Psych-Out!" />
-	        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvGenre"   android:textSize="@dimen/show_subtitle_height" android:text="Psychedelic Rock, Space Rock, Drone, Shoegaze" />
-	        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvShowTime" android:textSize="@dimen/show_subtitle_height" android:text="Wednesday 4/30 11:00 PM" />
+	        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvTitle"   android:textSize="@dimen/show_title_height" android:text="@string/placeholder_title" />
+	        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvGenre"   android:textSize="@dimen/show_subtitle_height" android:text="@string/placeholder_genre" />
+	        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvShowTime" android:textSize="@dimen/show_subtitle_height" android:text="@string/placeholder_showtime" />
 	    </LinearLayout> 
 	    
 	    <ImageView
@@ -25,7 +26,5 @@
 	        android:layout_gravity="center"
 	        android:contentDescription="@string/show_logo"
 	        android:src="@drawable/fffs" />	    
-        
-    
     
 </LinearLayout>
