@@ -166,9 +166,12 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
     {
         ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Activity.CONNECTIVITY_SERVICE);
 
-        boolean isMetered = false;
         boolean isWifi = false;
+        boolean isMobile = false;
         boolean isEthernet = false;
+        boolean isRoaming = false;
+        boolean isMetered = false;
+        boolean isConnected = false;
         int result = 0;
 
         int bandwidth_settings = SettingsFragment.getBitrateSetting(getActivity());
@@ -208,23 +211,49 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
             NetworkInfo netinfo = connManager.getActiveNetworkInfo();
             if (netinfo != null)
             {
-                isWifi = (netinfo.getType() == ConnectivityManager.TYPE_WIFI);
-                isEthernet = (netinfo.getType() == ConnectivityManager.TYPE_ETHERNET);
+                int nettype = netinfo.getType();
+                
+                isWifi = (nettype == ConnectivityManager.TYPE_WIFI);
+                isEthernet = (nettype == ConnectivityManager.TYPE_ETHERNET);
+                
+                isMobile = ( (nettype == ConnectivityManager.TYPE_MOBILE)       || 
+                             (nettype == ConnectivityManager.TYPE_MOBILE_DUN)   || 
+                             (nettype == ConnectivityManager.TYPE_MOBILE_HIPRI) || 
+                             (nettype == ConnectivityManager.TYPE_MOBILE_MMS)   ||
+                             (nettype == ConnectivityManager.TYPE_MOBILE_SUPL) );
+                
+                isConnected = netinfo.isConnected();
+                isRoaming = netinfo.isRoaming();
+                
+                Log.d(TAG, "active network type = " + netinfo.getTypeName());
+                
+                Log.d(TAG, "isConnected = " + isConnected);
+                Log.d(TAG, "isWifi = " + isWifi);
+                Log.d(TAG, "isEthernet = " + isEthernet);
+                Log.d(TAG, "isMobile = " + isMobile);
+                Log.d(TAG, "isRoaming = " + isRoaming);
             }
 
             // isActiveNetworkMetered was introduced in API 16 (Jelly Bean)
             if (android.os.Build.VERSION.SDK_INT >= 16)
             {
                 isMetered = connManager.isActiveNetworkMetered();
+                Log.d(TAG, "isMetered = " + isMetered);
             }
 
-            Log.d(TAG, "isWifi = " + isWifi);
-            Log.d(TAG, "isEthernet = " + isWifi);
-            Log.d(TAG, "isMetered = " + isMetered);
-
-            if ((isWifi || isEthernet) && !isMetered)
+            if (isWifi || isEthernet)
             {
                 result = BITRATE_HIGH_KBIT_SEC;
+            }
+            else if (isMobile==false)
+            {
+                Log.w(TAG, "Network is neither Wifi, Ethernet, nor Mobile. Selecting stream bitrate based on metered/roaming state");
+                Log.w(TAG, "Its possible there is no connection active");
+                if (!isMetered && !isRoaming)
+                {
+                    Log.w(TAG, "Default to high bitrate since metered/roaming flags are false");
+                    result = BITRATE_HIGH_KBIT_SEC;
+                }
             }
         }
 
