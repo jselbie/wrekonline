@@ -27,7 +27,7 @@ public interface MediaPlayerView
 
     void setMainButtonState(MainButtonState state);
 
-    void setSeekBarEnabled(boolean enabled, int duration, int position);
+    void setSeekBarEnabled(boolean enabled, int duration, int position, int secondaryPosition);
 
     void setTrackButtonsEnabled(boolean prevEnabled, boolean nextEnabled);
 

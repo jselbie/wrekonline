@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 
+
 public class MediaPlayerService extends Service
 {
+    public final static String TAG = MediaPlayerService.class.getSimpleName();
+
     MediaPlayerPresenter _presenter;
     ScheduleFetcher _fetcher;
     
@@ -20,20 +23,19 @@ public class MediaPlayerService extends Service
     {
         _context = context;
     }
-
-    public static void StartService()
+    
+    public static void startService()
     {
         Intent intent = new Intent(_context, MediaPlayerService.class);
         _context.startService(intent);
     }
 
-    public static void StopService()
+    public static void stopService()
     {
         Intent intent = new Intent(_context, MediaPlayerService.class);
         _context.stopService(intent);
+        
     }
-
-    public final static String TAG = MediaPlayerService.class.getSimpleName();
 
     @Override
     public IBinder onBind(Intent arg0)
@@ -99,5 +101,4 @@ public class MediaPlayerService extends Service
         // "if the process is killed due to low system resource,don't bother starting it back up again"
         return START_NOT_STICKY;
     }
-
 }

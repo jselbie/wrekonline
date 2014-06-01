@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollAbout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -35,21 +35,28 @@
 	
 	
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""  />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvAppVersion"  />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tvAppVersion" />
 	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dev_by"  />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/feedback_email"  />
-
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/feedback_email" android:autoLink="email" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/feedback_group" android:id="@+id/tvGoogleGroup"  />
+    
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""  />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/about_wrek_weblink" android:autoLink="web" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/wrek_comments_email" android:autoLink="email" />
+    
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""  />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/about_wrek_title"   />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/about_wrek_content"  />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""  />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/about_wrek_weblink" android:autoLink="web" />
 
     <View android:layout_width="match_parent" android:layout_height="1px" android:background="#FF000000" android:layout_marginTop="20dp" android:layout_marginBottom="10dp" />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/wrek_copyright"  />
     
     <View android:layout_width="match_parent" android:layout_height="1px" android:background="#FF000000" android:layout_marginTop="20dp" android:layout_marginBottom="10dp" />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ibiquity_copyright"  />
+    
+    <View android:layout_width="match_parent" android:layout_height="1px" android:background="#FF000000" android:layout_marginTop="20dp" android:layout_marginBottom="10dp" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/app_license" android:autoLink="web" />
     
     <View android:layout_width="match_parent" android:layout_height="1px" android:background="#FF000000" android:layout_marginTop="20dp" android:layout_marginBottom="10dp" />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/apache_dutta" />

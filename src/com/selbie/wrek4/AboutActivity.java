@@ -21,6 +21,8 @@ import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -31,12 +33,19 @@ public class AboutActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         
+        // set the app version
         String versionLabel = this.getResources().getString(R.string.version_label);
         String version = versionLabel + getVersionNumber();
         ((TextView)findViewById(R.id.tvAppVersion)).setText(version);
+        
+        TextView tv = (TextView) findViewById(R.id.tvGoogleGroup);
+        String text = this.getString(R.string.feedback_group);
+        tv.setText(Html.fromHtml(text));
+        tv.setMovementMethod(LinkMovementMethod.getInstance());        
     }
     
     private String getVersionNumber()

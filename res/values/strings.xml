@@ -41,12 +41,14 @@
     <string name="bitrate_summary_low">Low (24 kbit/sec)</string>
     
     <string name="about_wrek_title"><b><u>About WREK Atlanta</u></b></string>
-    <string name="about_wrek_content">WREK is the entirely student managed, operated and engineered radio station at Georgia Tech in Atlanta. WREK broadcasts 24 hours a day from the Georgia Tech Student Center on 91.1 FM with 100,000 watts throughout Atlanta. The station also broadcasts a divsersity of its current programming on an HD subchannel. The station offers its air signal online in addition to a two week mp3 archive of all recorded shows.\n\nWREK has been broadcasting since March 25th, 1968. Broadcasting from the top of the Van Leer Electrical Engineering building, the first song played over the air was Spooky by the Classics IV. Years later, the station moved to the offices adjacent to the the Alexander Memorial Coliseum where it stayed until 2008 when it moved to the newly remodelled Student Center.\n\nSince then, names, faces, and clothing fashions may have changed, but the station-wide philosophy of providing diverse, quality programming to the Atlanta area and the world at large has remained unwavering.\n\nIn 1994, WREK became one of the first radio stations to stream its air signal over the Internet.</string>
-    <string name="about_wrek_weblink">Visit WREK on the web at www.wrek.org</string>
+    <string name="about_wrek_content">WREK is the entirely student managed, operated and engineered radio station at Georgia Tech in Atlanta. WREK broadcasts 24 hours a day from the Georgia Tech Student Center on 91.1 FM with 100,000 watts throughout Atlanta. The station also broadcasts a divsersity of its current programming on an HD subchannel. The station offers its air signal online in addition to a two week mp3 archive of all recorded shows.\n\nWREK has been broadcasting since March 25th, 1968. Broadcasting from the top of the Van Leer Electrical Engineering building, the first song played over the air was \"Spooky\" by the Classics IV. Years later, the station moved to the offices adjacent to the Alexander Memorial Coliseum where it stayed until 2008 when it moved to the newly remodelled Student Center.\n\nSince then, names, faces, and clothing fashions may have changed, but the station-wide philosophy of providing diverse, quality programming to the Atlanta area and the world at large has remained unwavering.\n\nIn 1994, WREK became one of the first radio stations to stream its air signal over the Internet.</string>
+    <string name="about_wrek_weblink">Follow WREK on the web: www.wrek.org</string>
     <string name="for_android">WREK Online for Android</string>
     <string name="version_label">"Version: "</string>
     <string name="dev_by">Developed by: John Selbie</string>
     <string name="feedback_email">Feedback: apps@selbie.com</string>
+    <string name="feedback_group">Google Group Community Forum: &lt;a href="https://groups.google.com/d/forum/wrekandroid"&gt;wrekandroid&lt;a&gt;</string>
+    <string name="wrek_comments_email">Contact WREK: comments@wrek.org</string>
     
     <string name="playpause_tag">playpause_tag</string>
     
@@ -63,9 +65,8 @@
        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
     </string>
     
+    <string name="app_license">This software application itself is released as open source. To obtain the software source code and its corresponding license agreement, visit https://github.com/jselbie/wrekonline</string>
     
-    
-    	
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
 

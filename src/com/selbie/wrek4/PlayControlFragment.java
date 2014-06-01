@@ -194,7 +194,7 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     }
 
     @Override
-    public void setSeekBarEnabled(boolean enabled, int duration, int position)
+    public void setSeekBarEnabled(boolean enabled, int duration, int position, int secondaryPosition)
     {
 
         _seekbar.setEnabled(enabled);
@@ -205,6 +205,7 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         if (_seekbarIsAdjusting == false)
         {
             _seekbar.setProgress(position);
+            _seekbar.setSecondaryProgress(secondaryPosition);
             updateTimestamp(duration, position);
         }
         

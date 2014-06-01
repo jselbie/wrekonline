@@ -20,7 +20,9 @@ package com.selbie.wrek4;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -55,8 +57,10 @@ public class MediaPlayerPresenter
     private int _playlistIndex; // which track is "active"
 
     private boolean _isLiveSource;
+    int _secondaryProgressPercent;
     private MediaPlayerView _view;
     private PeriodicTimer _timer;
+    private PeriodicTimer _timerPauseSafety; // the pause safety timer
     private String _title;
 
     private static MediaPlayerPresenter _staticInstance;
@@ -68,10 +72,12 @@ public class MediaPlayerPresenter
 
         _playlist = new ArrayList<String>();
         _playlistIndex = 0;
+        _secondaryProgressPercent = 0;
 
         _isLiveSource = false;
         _view = null;
         _timer = null;
+        _timerPauseSafety = null;
         _title = "";
     }
 
@@ -129,12 +135,25 @@ public class MediaPlayerPresenter
             }
         });
         
+        _player.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
+
+            @Override
+            public void onBufferingUpdate(MediaPlayer player, int percent)
+            {
+                if (player == _player)
+                {
+                    MediaPlayerPresenter.this.onBufferingUpdate(percent);
+                }
+            }});
+        
 
     }
 
     private MediaPlayer createMediaPlayer()
     {
-        return new MediaPlayer();
+        MediaPlayer player = new MediaPlayer();
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC); // this will allow incoming phone calls to mute the audio
+        return player;
     }
 
     private void destroyPlayer()
@@ -146,14 +165,14 @@ public class MediaPlayerPresenter
             _player = null;
             player.reset();
             player.release();
-            player = null;
+            _secondaryProgressPercent = 0;
         }
     }
 
     public void attachView(MediaPlayerView view)
     {
         Log.d(TAG, "attachView");
-        // immediate turnaround and tell this view how to display itself
+        // immediately turnaround and tell this view how to display itself
         _view = view;
         updateView();
     }
@@ -164,8 +183,8 @@ public class MediaPlayerPresenter
         
         if (_view == view)
         {
-            stopSeekbarUpdateTimer();
             _view = null;
+            updateView(); // even though we don't have a view, updateView will take of start/top the appropriate timers
         }
     }
     
@@ -320,18 +339,29 @@ public class MediaPlayerPresenter
 
     public void onPause()
     {
-        if (_state == PlayerState.Started)
+        // The unfortunate thing about MediaPlayer.pause() is that it keeps streaming from the remote server at
+        // some arbitrary rate that makes no sense. This was validated with DDMS and Wireshark. It appears to be
+        // keeping the stream active for keep-alive purposes by buffing up a few hundred kilobytes every 15 seconds.
+        // But it doesn't seem to ever stop. Perhaps it does stop on for a fixed length stream, but it seems
+        // to go on forever for a live stream. The android process manager eventually stops the process
+        // when the app goes go into the background (with the service stopped), but there's no guarantee.
+        
+        // So for now, we'll make pausing a live stream as a hard stop.
+        
+        // Non-live streams will stay paused for 5 minutes. This is a nice balance between consuming resources while still
+        // providing some convenience of being able to toggle back to listening to music with no delay.
+        
+        if ((_state == PlayerState.Started) && (_isLiveSource == false))
         {
             _state = PlayerState.Paused;
             _player.pause();
             updateView();
         }
-        else if ((_state == PlayerState.Preparing) || (_state == PlayerState.Prepared))
+        else if ((_state == PlayerState.Preparing) || (_state == PlayerState.Prepared) || (_isLiveSource))
         {
             destroyPlayer();
             updateView();
         }
-
     }
 
     public void onSeek(int position)
@@ -361,7 +391,7 @@ public class MediaPlayerPresenter
             restartPlayer(); // restartPlayer calls updateView()
         }
     }
-
+    
     // -------------------------------------------------------------------------------
 
     // player callbacks
@@ -408,6 +438,31 @@ public class MediaPlayerPresenter
             updateView();
         }
     }
+    
+    private void onBufferingUpdate(int percent)
+    {
+        // As per Android documentation:
+        //   Called to update status in buffering a media stream received through progressive HTTP download.
+        //   The received buffering percentage indicates how much of the content has been buffered or played.
+        //   For example a buffering update of 80 percent when half the content has already been played indicates
+        //   that the next 30 percent of the content to play has been buffered.
+        
+        if (percent < 0)
+        {
+            // percent can be something awkward like "-2147483648" on a live source. Just clamp it.
+            percent = 0;
+        }
+        else if (percent > 100)
+        {
+            percent = 100;
+        }
+        
+        if (_secondaryProgressPercent != percent)
+        {
+            Log.d(TAG, "onBufferingUpdate - " + percent);
+            _secondaryProgressPercent = percent;
+        }
+    }
 
     // -------------------------------------------------------------------------------
 
@@ -415,7 +470,7 @@ public class MediaPlayerPresenter
     {
 
         boolean seekBarEnabled = ((_state == PlayerState.Started) || (_state == PlayerState.Paused) || (_state == PlayerState.PlaybackComplete));
-        int duration = 0, position = 0;
+        int duration = 0, position = 0, secondaryProgress = 0;
 
         if (seekBarEnabled)
         {
@@ -427,12 +482,13 @@ public class MediaPlayerPresenter
             {
                 duration = _player.getDuration();
                 position = _player.getCurrentPosition();
+                secondaryProgress = (duration * _secondaryProgressPercent) / 100;
             }
         }
 
         if (_view != null)
         {
-            _view.setSeekBarEnabled(seekBarEnabled, duration, position);
+            _view.setSeekBarEnabled(seekBarEnabled, duration, position, secondaryProgress);
         }
     }
 
@@ -444,7 +500,6 @@ public class MediaPlayerPresenter
 
         if ((_state == PlayerState.Started) || (_state == PlayerState.Paused))
         {
-
             message = "Now Playing: " + _title;
             addPostfix = true;
         }
@@ -455,6 +510,11 @@ public class MediaPlayerPresenter
         else if (_state == PlayerState.Error)
         {
             message = "Error";
+        }
+        else if ((_state == PlayerState.Idle) && (_title != null) && !_title.isEmpty())
+        {
+            message = "Selected: " + _title;
+            addPostfix = true;
         }
 
         if (addPostfix && (_playlist.size() > 1))
@@ -469,7 +529,6 @@ public class MediaPlayerPresenter
     {
         MediaPlayerView.MainButtonState mainButtonState = MediaPlayerView.MainButtonState.PlayButtonEnabled;
         boolean seekBarEnabled = false;
-        int duration = 0, position = 0;
         boolean isEmptyUrl = getActiveUrl().isEmpty();
 
         boolean trackButtonsEnabled = false;
@@ -479,11 +538,9 @@ public class MediaPlayerPresenter
         boolean startService = false;
         boolean stopService = false;
         
-
-        if (_view == null)
-        {
-            return;
-        }
+        boolean needPauseTimer = false;
+        
+        // even if _view is null, this method will take care of turning on/off the timers as appropriate 
 
         switch (_state)
         {
@@ -535,6 +592,7 @@ public class MediaPlayerPresenter
             // actually playing or paused (Consistent with seekbar)
             trackButtonsEnabled = true;
             stopService = true;
+            needPauseTimer = true;
             
             break;
         }
@@ -569,15 +627,14 @@ public class MediaPlayerPresenter
         if (_view != null)
         {
             _view.setMainButtonState(mainButtonState);
-            _view.setSeekBarEnabled(seekBarEnabled, duration, position);
             _view.setTrackButtonsEnabled(prevButtonEnabled, nextButtonEnabled);
             _view.setDisplayString(getDisplayMessage());
+            updateSeekbarView();
         }
 
-        updateSeekbarView();
 
-        // if the seekbar is enabled, make sure the timer is started
-        if (seekBarEnabled)
+        // if the seekbar is enabled (and we have a view), make sure the timer is started
+        if (seekBarEnabled && (_view != null))
         {
             startSeekbarUpdateTimer();
         }
@@ -588,11 +645,20 @@ public class MediaPlayerPresenter
         
         if (stopService == true)
         {
-            MediaPlayerService.StopService();
+            MediaPlayerService.stopService();
         }
         else if (startService == true)
         {
-            MediaPlayerService.StartService();
+            MediaPlayerService.startService();
+        }
+        
+        if (needPauseTimer)
+        {
+            startPauseSafetyTimer();
+        }
+        else
+        {
+            stopPauseSafetyTimer();
         }
         
     }
@@ -636,5 +702,66 @@ public class MediaPlayerPresenter
         _timer = new PeriodicTimer(callback, 1000, false, null);
         _timer.Start();
     }
-
+    
+    
+    private void startPauseSafetyTimer()
+    {
+        // About the pause safety timer.
+        //
+        // When the stream is "paused" by the user, the Android MediaPlayer will still drizzle download bits from the server if its not already completed
+        // Hence, the user could pause a stream and exit the activity. Android should eventually kill the process (since the service is stopped), but there's no
+        // guarantee. So the pause timer will wake up 5 minutes later and make sure the MediaPlayer is shutdown
+        // If the user returns to the app within 5 minutes
+        //
+        // Ideally, when the app goes into the background, we just stop any paused stream immediately, but remember its URL and progress
+        // such that when the player is restarted, the stream picks up near where it left off before
+        
+        
+        if ((_timerPauseSafety != null) && _timerPauseSafety.isStarted())
+        {
+            return;
+        }
+        
+        Log.d(TAG, "pause timer - started");        
+        
+        PeriodicTimer.PeriodicTimerCallback callback = new PeriodicTimer.PeriodicTimerCallback()
+        {
+            @Override
+            public void onTimerCallback(Object token)
+            {
+                onPauseSafetyTimerCallback();
+            }
+        };
+        
+        int pausetimeout = 5 * 60 * 1000; // 5 minutes
+        _timerPauseSafety = new PeriodicTimer(callback, pausetimeout, true /*one shot*/, null);
+        _timerPauseSafety.Start();
+        
+    }
+    
+    private void stopPauseSafetyTimer()
+    {
+        if (_timerPauseSafety != null)
+        {
+            Log.d(TAG, "pause timer - stopped");
+            _timerPauseSafety.Stop();
+            _timerPauseSafety = null;
+        }
+    }
+    
+    private void onPauseSafetyTimerCallback()
+    {
+        if (_state == PlayerState.Paused)
+        {
+            Log.d(TAG, "onPauseSafetyTimerCallback - stopping player because we've been paused for too long");
+            destroyPlayer();
+            updateView(); // this will call stopPauseSafetyTimer above. This is ok, periodictimer can handle being stopped from within its callback
+        }
+        else
+        {
+            Log.w(TAG, "onPauseSafetyTimerCallback - we aren't in the paused state - nothing to do!");
+        }
+    }
+    
+    
 }
