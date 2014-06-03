@@ -187,7 +187,7 @@ public class MediaPlayerPresenter
             updateView(); // even though we don't have a view, updateView will take of start/top the appropriate timers
         }
     }
-    
+
 
     public void reset()
     {
@@ -391,7 +391,7 @@ public class MediaPlayerPresenter
             restartPlayer(); // restartPlayer calls updateView()
         }
     }
-    
+
     // -------------------------------------------------------------------------------
 
     // player callbacks
@@ -438,7 +438,7 @@ public class MediaPlayerPresenter
             updateView();
         }
     }
-    
+
     private void onBufferingUpdate(int percent)
     {
         // As per Android documentation:
@@ -702,8 +702,8 @@ public class MediaPlayerPresenter
         _timer = new PeriodicTimer(callback, 1000, false, null);
         _timer.Start();
     }
-    
-    
+
+
     private void startPauseSafetyTimer()
     {
         // About the pause safety timer.
@@ -738,7 +738,7 @@ public class MediaPlayerPresenter
         _timerPauseSafety.Start();
         
     }
-    
+
     private void stopPauseSafetyTimer()
     {
         if (_timerPauseSafety != null)
@@ -748,7 +748,7 @@ public class MediaPlayerPresenter
             _timerPauseSafety = null;
         }
     }
-    
+
     private void onPauseSafetyTimerCallback()
     {
         if (_state == PlayerState.Paused)
@@ -762,6 +762,6 @@ public class MediaPlayerPresenter
             Log.w(TAG, "onPauseSafetyTimerCallback - we aren't in the paused state - nothing to do!");
         }
     }
-    
+
     
 }

@@ -24,6 +24,11 @@ public class MediaPlayerService extends Service
         _context = context;
     }
     
+    public static Context getContext()
+    {
+        return _context;
+    }
+    
     public static void startService()
     {
         Intent intent = new Intent(_context, MediaPlayerService.class);
@@ -66,7 +71,7 @@ public class MediaPlayerService extends Service
             builder = builder.setContentTitle(title).setContentText(subtext);
             builder = builder.setWhen(System.currentTimeMillis());
             builder = builder.setSmallIcon(R.drawable.notification);
-            builder = builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.notification));
+            builder = builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.notification_large));
             builder = builder.setContentIntent(pendingIntent);
             notification = builder.build();
         }
