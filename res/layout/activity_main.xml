@@ -11,7 +11,7 @@
      
     <fragment
         android:id="@+id/frag1"
-        android:name="com.selbie.wrek4.ScheduleListFragment"
+        android:name="com.selbie.wrek.ScheduleListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -19,7 +19,7 @@
     
     <fragment
         android:id="@+id/fragPlayControl"
-        android:name="com.selbie.wrek4.PlayControlFragment"
+        android:name="com.selbie.wrek.PlayControlFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout="@layout/media_player2" />

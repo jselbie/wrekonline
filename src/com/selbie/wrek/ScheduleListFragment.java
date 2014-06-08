@@ -15,7 +15,7 @@
 */
 
 
-package com.selbie.wrek4;
+package com.selbie.wrek;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.selbie.wrek4.ScheduleFetcher.ScheduleFetcherCallback;
+import com.selbie.wrek.ScheduleFetcher.ScheduleFetcherCallback;
 
 public class ScheduleListFragment extends ListFragment implements ScheduleFetcherCallback
 {

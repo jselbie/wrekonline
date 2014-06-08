@@ -1,4 +1,4 @@
-package com.selbie.wrek4;
+package com.selbie.wrek;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;

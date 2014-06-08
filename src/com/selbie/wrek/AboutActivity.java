@@ -15,7 +15,7 @@
 */
 
 
-package com.selbie.wrek4;
+package com.selbie.wrek;
 
 import android.app.Activity;
 import android.content.pm.PackageInfo;
