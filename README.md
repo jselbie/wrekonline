@@ -1,7 +1,7 @@
 wrekonline
 ==========
 
-![alt text](https://github.com/jselbie/wrekonline/blob/master/res/drawable/logo.png "WREK Online for Android")
+![alt text](http://www.wrek.org/wp-content/themes/wrek/images/logo.png "WREK Online for Android")
 
 WREK Online for Android
 
