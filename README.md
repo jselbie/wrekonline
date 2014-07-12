@@ -1,7 +1,7 @@
 WREK Online For Android
 =======================
 
-![alt text](https://lh4.ggpht.com/luK-pr0Hz4V0MdiFyk4ZlSIyx2a90hDSoFCftjzcMeo1f6HilnE6Oug0By90baBKUPCv=w300-rw "WREK Online for Android")
+![alt text](http://ecx.images-amazon.com/images/I/41FYBy878zL._SL500_AA300_.png "WREK Online for Android")
 
 WREK Online for Android
 
