@@ -26,9 +26,14 @@ import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.os.CountDownTimer;
 import android.util.Log;
 
-public class MediaPlayerPresenter
+import com.selbie.wrek.metaproxy.IMetadataCallback;
+import com.selbie.wrek.metaproxy.IcecastMetadata;
+import com.selbie.wrek.metaproxy.MetadataCallbackMarshaller;
+
+public class MediaPlayerPresenter implements IMetadataCallback
 {
     public static final String TAG = MediaPlayerPresenter.class.getSimpleName();
 
@@ -59,9 +64,12 @@ public class MediaPlayerPresenter
     private boolean _isLiveSource;
     int _secondaryProgressPercent;
     private MediaPlayerView _view;
-    private PeriodicTimer _timer;
-    private PeriodicTimer _timerPauseSafety; // the pause safety timer
+    private CountDownTimer _timer;
+    private CountDownTimer _timerPauseSafety; // the pause safety timer
     private String _title;
+    
+    IcecastMetadata _metadata;
+    MetadataCallbackMarshaller _metadataCallbackMarshaller;
 
     private static MediaPlayerPresenter _staticInstance;
 
@@ -167,6 +175,15 @@ public class MediaPlayerPresenter
             player.release();
             _secondaryProgressPercent = 0;
         }
+        
+        _metadata = null;
+        
+        if (_metadataCallbackMarshaller != null)
+        {
+            _metadataCallbackMarshaller.dispose();
+            _metadataCallbackMarshaller = null;
+        }
+        
     }
 
     public void attachView(MediaPlayerView view)
@@ -184,7 +201,7 @@ public class MediaPlayerPresenter
         if (_view == view)
         {
             _view = null;
-            updateView(); // even though we don't have a view, updateView will take of start/top the appropriate timers
+            updateView(); // even though we don't have a view, updateView will take of start/stop the appropriate timers
         }
     }
 
@@ -524,6 +541,20 @@ public class MediaPlayerPresenter
 
         return message + postfix;
     }
+    
+    private String getAlternateDisplayMessage()
+    {
+        String message = "";
+        
+        if (_state == PlayerState.Started)
+        {
+            if (_metadata != null)
+            {
+                return _metadata.getStreamTitle();
+            }
+        }
+        return message;
+    }
 
     private void updateView()
     {
@@ -628,10 +659,9 @@ public class MediaPlayerPresenter
         {
             _view.setMainButtonState(mainButtonState);
             _view.setTrackButtonsEnabled(prevButtonEnabled, nextButtonEnabled);
-            _view.setDisplayString(getDisplayMessage());
+            _view.setDisplayString(getDisplayMessage(), getAlternateDisplayMessage());
             updateSeekbarView();
         }
-
 
         // if the seekbar is enabled (and we have a view), make sure the timer is started
         if (seekBarEnabled && (_view != null))
@@ -667,7 +697,7 @@ public class MediaPlayerPresenter
     {
         if (_timer != null)
         {
-            _timer.Stop();
+            _timer.cancel();
             _timer = null;
         }
     }
@@ -675,32 +705,49 @@ public class MediaPlayerPresenter
     private void startSeekbarUpdateTimer()
     {
 
-        if ((_timer != null) && _timer.isStarted())
+        if (_timer != null)
         {
             return;
         }
-
-        PeriodicTimer.PeriodicTimerCallback callback = new PeriodicTimer.PeriodicTimerCallback()
-        {
-
-            private boolean _gotFirstCallback = false;
+        
+        long forever = Long.MAX_VALUE;
+        assert(forever > 0);
+        long onesecond = 1000;
+        
+        assert(_timer == null);
+        _timer = new CountDownTimer(forever, onesecond) {
+            
+            boolean _gotFirstCallback = false;
 
             @Override
-            public void onTimerCallback(Object token)
+            public void onTick(long millisUntilFinished)
             {
-
+                if (_timer != this)
+                {
+                    Log.wtf(TAG, "weird. onTick was called, but _timer is either null or not this instance");
+                    return;
+                }
+                
                 if (_gotFirstCallback == false)
                 {
                     _gotFirstCallback = true;
                     Log.d(TAG, "onTimerCallback (Seekbar) - got first callback");
                 }
+                
+                // do the callback
                 updateSeekbarView();
+            }
 
+            @Override
+            public void onFinish()
+            {
+                // this should never happen for a million years and some more
+                Log.wtf(TAG, "unexpected end to repeating timer");
+                _timer = null;
             }
         };
-
-        _timer = new PeriodicTimer(callback, 1000, false, null);
-        _timer.Start();
+        
+        _timer.start();
     }
 
 
@@ -716,26 +763,30 @@ public class MediaPlayerPresenter
         // Ideally, when the app goes into the background, we just stop any paused stream immediately, but remember its URL and progress
         // such that when the player is restarted, the stream picks up near where it left off before
         
-        
-        if ((_timerPauseSafety != null) && _timerPauseSafety.isStarted())
+        if (_timerPauseSafety != null)
         {
             return;
         }
         
-        Log.d(TAG, "pause timer - started");        
-        
-        PeriodicTimer.PeriodicTimerCallback callback = new PeriodicTimer.PeriodicTimerCallback()
-        {
-            @Override
-            public void onTimerCallback(Object token)
-            {
-                onPauseSafetyTimerCallback();
-            }
-        };
+        Log.d(TAG, "pause timer - started");
         
         int pausetimeout = 5 * 60 * 1000; // 5 minutes
-        _timerPauseSafety = new PeriodicTimer(callback, pausetimeout, true /*one shot*/, null);
-        _timerPauseSafety.Start();
+        assert(_timerPauseSafety == null);
+        _timerPauseSafety = new CountDownTimer(pausetimeout, pausetimeout) {
+
+                @Override
+                public void onFinish()
+                {
+                    Log.d(TAG, "CountDownTimer.onFinish called");
+                    _timerPauseSafety = null;
+                    onPauseSafetyTimerCallback();
+                }
+    
+                @Override public void onTick(long millisUntilFinished) {}
+                
+            };
+            
+        _timerPauseSafety.start();
         
     }
 
@@ -744,7 +795,7 @@ public class MediaPlayerPresenter
         if (_timerPauseSafety != null)
         {
             Log.d(TAG, "pause timer - stopped");
-            _timerPauseSafety.Stop();
+            _timerPauseSafety.cancel();
             _timerPauseSafety = null;
         }
     }
@@ -755,12 +806,19 @@ public class MediaPlayerPresenter
         {
             Log.d(TAG, "onPauseSafetyTimerCallback - stopping player because we've been paused for too long");
             destroyPlayer();
-            updateView(); // this will call stopPauseSafetyTimer above. This is ok, periodictimer can handle being stopped from within its callback
+            updateView(); // this will call stopPauseSafetyTimer above. This is ok, since _timerPauseSafety should be null before this method is called
         }
         else
         {
             Log.w(TAG, "onPauseSafetyTimerCallback - we aren't in the paused state - nothing to do!");
         }
+    }
+
+    @Override
+    public void onNewMetadataAvailable(String metadata)
+    {
+        _metadata = new IcecastMetadata(metadata);
+        this.updateView();
     }
 
     

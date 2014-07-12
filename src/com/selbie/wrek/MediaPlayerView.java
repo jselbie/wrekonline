@@ -31,5 +31,5 @@ public interface MediaPlayerView
 
     void setTrackButtonsEnabled(boolean prevEnabled, boolean nextEnabled);
 
-    void setDisplayString(String message);
+    void setDisplayString(String message, String alternateMessage);
 }

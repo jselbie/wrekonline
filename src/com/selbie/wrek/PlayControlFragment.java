@@ -38,11 +38,12 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     private MediaPlayerPresenter _presenter;
     private SeekBar _seekbar;
     private TextView _timestamp;
+    private TextViewRotator _textviewRotator;
     private boolean _seekbarIsAdjusting; // true if the user has his finger on the seekbar
     private ImageButton _playbutton;
     private ImageButton _nextbutton;
     private ImageButton _prevbutton;
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState)
     {
@@ -66,6 +67,8 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         _prevbutton = (ImageButton) (getView().findViewById(R.id.buttonPrev));
         _nextbutton = (ImageButton) (getView().findViewById(R.id.buttonNext));
         _timestamp = (TextView)(getView().findViewById(R.id.timestamp));
+        
+        _textviewRotator = new TextViewRotator((TextView) getView().findViewById(R.id.tvNowPlaying), 2000);
         
         _presenter = MediaPlayerPresenter.getInstance();
         _presenter.attachView(this);
@@ -149,7 +152,15 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     public void onStop()
     {
         super.onStop();
-
+        
+        // important - we need to cancel the timers that rotate the different titles in the now playing bar
+        // Leaking timers is never a good thing
+        if (_textviewRotator != null)
+        {
+            _textviewRotator.stop();
+            _textviewRotator = null;
+        }
+        
         if (_presenter != null)
         {
             _presenter.detachView(this);
@@ -219,10 +230,9 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     }
 
     @Override
-    public void setDisplayString(String message)
+    public void setDisplayString(String message, String alternateMessage)
     {
-        TextView tv = (TextView) getView().findViewById(R.id.tvNowPlaying);
-        tv.setText(message);
+        _textviewRotator.setText(message, alternateMessage);
     }
 
 }
