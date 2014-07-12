@@ -1,5 +1,5 @@
-wrekonline
-==========
+WREK Online For Android
+=======================
 
 ![alt text](http://www.wrek.org/wp-content/themes/wrek/images/logo.png "WREK Online for Android")
 
