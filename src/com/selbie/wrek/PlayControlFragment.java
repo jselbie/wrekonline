@@ -38,11 +38,13 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     private MediaPlayerPresenter _presenter;
     private SeekBar _seekbar;
     private TextView _timestamp;
-    private TextViewRotator _textviewRotator;
+    private TextView _tvNowPlaying;
     private boolean _seekbarIsAdjusting; // true if the user has his finger on the seekbar
     private ImageButton _playbutton;
     private ImageButton _nextbutton;
     private ImageButton _prevbutton;
+    private TextSwapper _textswapper;
+    
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState)
@@ -52,10 +54,10 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         View view = inflater.inflate(R.layout.media_player2, parent, false);
         
         _seekbarIsAdjusting = false;
-
+        
         return view;
     }
-
+    
     @Override
     public void onStart()
     {
@@ -66,12 +68,17 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         _playbutton = (ImageButton) (getView().findViewById(R.id.buttonPlayStop));
         _prevbutton = (ImageButton) (getView().findViewById(R.id.buttonPrev));
         _nextbutton = (ImageButton) (getView().findViewById(R.id.buttonNext));
+        
         _timestamp = (TextView)(getView().findViewById(R.id.timestamp));
         
-        _textviewRotator = new TextViewRotator((TextView) getView().findViewById(R.id.tvNowPlaying), 2000);
+        _tvNowPlaying = (TextView)(getView().findViewById(R.id.tvNowPlaying));
+        _tvNowPlaying.setText(""); // clear out the placeholder value (or any residual string), this also fixes an issue with TextSwapper's duplicate string detection
+        
+        _textswapper = new TextSwapper(_tvNowPlaying);
         
         _presenter = MediaPlayerPresenter.getInstance();
-        _presenter.attachView(this);
+        _presenter.attachView(this); // this will call back into us and update everything
+        
         
 
         _seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
@@ -153,18 +160,13 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     {
         super.onStop();
         
-        // important - we need to cancel the timers that rotate the different titles in the now playing bar
-        // Leaking timers is never a good thing
-        if (_textviewRotator != null)
-        {
-            _textviewRotator.stop();
-            _textviewRotator = null;
-        }
-        
         if (_presenter != null)
         {
             _presenter.detachView(this);
         }
+        
+        // stop all animations and timers
+        _textswapper.stop();
     }
 
     @Override
@@ -230,9 +232,17 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     }
 
     @Override
-    public void setDisplayString(String message, String alternateMessage)
+    public void setTitle(String title)
     {
-        _textviewRotator.setText(message, alternateMessage);
+        _textswapper.setPrimary(title);
     }
+    
+    @Override
+    public void setSongTitle(String songtitle)
+    {
+        _textswapper.setSecondary(songtitle);
+    }
+
+    
 
 }

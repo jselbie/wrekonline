@@ -31,6 +31,7 @@ import android.util.Log;
 
 import com.selbie.wrek.metaproxy.IMetadataCallback;
 import com.selbie.wrek.metaproxy.IcecastMetadata;
+import com.selbie.wrek.metaproxy.MetaStreamProxy;
 import com.selbie.wrek.metaproxy.MetadataCallbackMarshaller;
 
 public class MediaPlayerPresenter implements IMetadataCallback
@@ -68,8 +69,9 @@ public class MediaPlayerPresenter implements IMetadataCallback
     private CountDownTimer _timerPauseSafety; // the pause safety timer
     private String _title;
     
-    IcecastMetadata _metadata;
-    MetadataCallbackMarshaller _metadataCallbackMarshaller;
+    private IcecastMetadata _metadata;
+    private MetadataCallbackMarshaller _metadataCallbackMarshaller;
+    private MetaStreamProxy _metaproxy;
 
     private static MediaPlayerPresenter _staticInstance;
 
@@ -160,7 +162,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
     private MediaPlayer createMediaPlayer()
     {
         MediaPlayer player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC); // this will allow incoming phone calls to mute the audio
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         return player;
     }
 
@@ -182,6 +184,12 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             _metadataCallbackMarshaller.dispose();
             _metadataCallbackMarshaller = null;
+        }
+        
+        if (_metaproxy != null)
+        {
+            _metaproxy.stop();
+            _metaproxy = null;
         }
         
     }
@@ -214,14 +222,34 @@ public class MediaPlayerPresenter implements IMetadataCallback
 
     private boolean restartPlayer()
     {
+        int proxyport;
         boolean success = false;
 
         destroyPlayer();
 
+        // create the player
         _player = createMediaPlayer();
         addCallbacksToPlayer();
         _state = PlayerState.Idle;
         String url = getActiveUrl();
+        
+        
+        // create the proxy if this is a live source
+        
+        if (_isLiveSource)
+        {
+            this._metadataCallbackMarshaller = new MetadataCallbackMarshaller();
+            this._metadataCallbackMarshaller.attach(this);
+            
+            Log.d(TAG, "Creating MetaStreamProxy instance");
+            _metaproxy = MetaStreamProxy.createAndStart(_metadataCallbackMarshaller);
+            proxyport = _metaproxy.getPort();
+            Log.d(TAG, "proxyport is " + proxyport);
+            url = _metaproxy.formatUrl(url);
+            
+            Log.d(TAG, "meta proxy created.  Tunnel URL is: " + url);
+        }
+        
 
         if (url.isEmpty() == false)
         {
@@ -509,7 +537,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         }
     }
 
-    private String getDisplayMessage()
+    private String getTitle()
     {
         String message = "";
         String postfix = "";
@@ -542,7 +570,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         return message + postfix;
     }
     
-    private String getAlternateDisplayMessage()
+    private String getSongTitle()
     {
         String message = "";
         
@@ -550,7 +578,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             if (_metadata != null)
             {
-                return _metadata.getStreamTitle();
+                return "Now Playing: " + _metadata.getStreamTitle();
             }
         }
         return message;
@@ -659,7 +687,8 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             _view.setMainButtonState(mainButtonState);
             _view.setTrackButtonsEnabled(prevButtonEnabled, nextButtonEnabled);
-            _view.setDisplayString(getDisplayMessage(), getAlternateDisplayMessage());
+            _view.setTitle(getTitle());
+            _view.setSongTitle(getSongTitle());
             updateSeekbarView();
         }
 
@@ -679,7 +708,15 @@ public class MediaPlayerPresenter implements IMetadataCallback
         }
         else if (startService == true)
         {
-            MediaPlayerService.startService();
+            String title = this._title;
+            String songtitle = (_metadata != null) ? _metadata.getStreamTitle() : "";
+            
+            if (songtitle.isEmpty() == false)
+            {
+                title = songtitle;
+            }
+            
+            MediaPlayerService.startService(title);
         }
         
         if (needPauseTimer)
@@ -817,6 +854,8 @@ public class MediaPlayerPresenter implements IMetadataCallback
     @Override
     public void onNewMetadataAvailable(String metadata)
     {
+        Log.d(TAG, "onNewMetadataAvailable: " + metadata);
+        
         _metadata = new IcecastMetadata(metadata);
         this.updateView();
     }

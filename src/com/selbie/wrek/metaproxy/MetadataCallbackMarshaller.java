@@ -1,3 +1,20 @@
+/*
+   Copyright 2014 John Selbie
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+
 package com.selbie.wrek.metaproxy;
 
 import android.os.Handler;
@@ -7,11 +24,12 @@ import android.os.Handler;
 // Pass this as the callback to the MetadataProxy construct. 
 // Then call the attach method below with the callback for the UI thread
 // Call the dispose() method when the proxy goes away
-public abstract class MetadataCallbackMarshaller implements Runnable, IMetadataCallback
+public class MetadataCallbackMarshaller implements Runnable, IMetadataCallback
 {
     Handler _handler;
     String _metadata;
     IMetadataCallback _appCallback;
+    boolean _isDirty;
 
     public MetadataCallbackMarshaller()
     {
@@ -40,6 +58,7 @@ public abstract class MetadataCallbackMarshaller implements Runnable, IMetadataC
             {
                 _handler = new Handler();
             }
+            _isDirty = false;
         }
     }
     
@@ -71,8 +90,9 @@ public abstract class MetadataCallbackMarshaller implements Runnable, IMetadataC
         {
             // Probably don't need to take the lock to do an atomic reference
             // assignment. But it's a good idea since _handler needs to be guarded.
-            // And because we assign _metadata within the lock
+            // And because we assign _metadata within the lock.
             meta = _metadata;
+            _isDirty = false;
         }
         
         if (_appCallback != null)
@@ -89,8 +109,13 @@ public abstract class MetadataCallbackMarshaller implements Runnable, IMetadataC
         {
             if (_handler != null)
             {
-                _metadata = metadata; 
-                _handler.post(this);
+                _metadata = metadata;
+                
+                if (_isDirty == false)
+                {
+                    _isDirty = true;
+                    _handler.post(this);
+                }
             }
         }
     }
