@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 import android.util.Log;
 
-class MetadataStreamFilter
+public class MetadataStreamFilter
 {
     public final static String TAG = MetadataStreamFilter.class.getSimpleName(); 
     
@@ -192,11 +192,10 @@ class MetadataStreamFilter
             _metaTotal = 0;
             _metaCount = 0;
             
-            Log.d(TAG, "New Metadata: " + _latestMetaData);
+            //Log.d(TAG, "Posting new metadata: " + _latestMetaData.subSequence(0, 20);
             
             if (_callback != null)
             {
-                Log.d(TAG, "Posting new metadata: " + _latestMetaData);
                 _callback.onNewMetadataAvailable(_latestMetaData);
             }
         }

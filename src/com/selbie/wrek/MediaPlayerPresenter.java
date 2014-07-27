@@ -219,6 +219,11 @@ public class MediaPlayerPresenter implements IMetadataCallback
         detachView(_view);
         destroyPlayer();
     }
+    
+    public boolean canProxyBeUsed()
+    {
+        return true;
+    }
 
     private boolean restartPlayer()
     {
@@ -235,8 +240,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         
         
         // create the proxy if this is a live source
-        
-        if (_isLiveSource)
+        if (_isLiveSource && canProxyBeUsed())
         {
             this._metadataCallbackMarshaller = new MetadataCallbackMarshaller();
             this._metadataCallbackMarshaller.attach(this);
@@ -708,7 +712,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         }
         else if (startService == true)
         {
-            String title = this._title;
+            String title = _title;
             String songtitle = (_metadata != null) ? _metadata.getStreamTitle() : "";
             
             if (songtitle.isEmpty() == false)

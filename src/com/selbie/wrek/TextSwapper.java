@@ -45,14 +45,19 @@ public class TextSwapper
 
             @Override public void onTick(long millisUntilFinished)
             {
-                String str = _isPrimaryShown ? _secondary : _primary;
-                _isPrimaryShown = !_isPrimaryShown;
-                _tv.setText(str);
+                swapStrings();
             }
         };
         
         _timer.start();
         
+    }
+    
+    public void swapStrings()
+    {
+        String str = _isPrimaryShown ? _secondary : _primary;
+        _isPrimaryShown = !_isPrimaryShown;
+        _tv.setText(str);
     }
     
     // cancels and nulls out the timer
