@@ -39,6 +39,8 @@ public class TextSwapper
     // starts the rotation time if it is not already running. Does not modify any text fields  until the timer period elapses
     private void start()
     {
+        assert(_timer == null);
+        
         _timer = new CountDownTimer(Long.MAX_VALUE, 4000) // 4 second interval
         {
             @Override public void onFinish() {}
@@ -72,7 +74,7 @@ public class TextSwapper
     
     boolean areBothStringsSet()
     {
-        boolean both = (!_primary.equals("") && !_secondary.equals(""));
+        boolean both = ((_primary.isEmpty() == false) && (_secondary.isEmpty() == false)); 
         return both;
     }
     
@@ -133,9 +135,13 @@ public class TextSwapper
             stop();
             start();
         }
-        
-    }
-    
+        else
+        {
+            stop();
+            _tv.setText(_primary);
+            _isPrimaryShown = true;
+        }
+    }    
     
 
 }

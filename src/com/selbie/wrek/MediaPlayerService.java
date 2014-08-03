@@ -30,35 +30,36 @@ import android.util.Log;
 public class MediaPlayerService extends Service
 {
     public final static String TAG = MediaPlayerService.class.getSimpleName();
+    public final static String INTENT_EXTRA_SONGTITLE = "mps_songtitle";
 
     MediaPlayerPresenter _presenter;
     ScheduleFetcher _fetcher;
     
-    static Context _context;
+    static Context _applicationContext;   // this needs to be the Application context, otherwise it's a leak
     
-    public static void setContext(Context context)
+    public static void setApplicationContext(Context context)
     {
-        _context = context;
+        _applicationContext = context;
     }
     
     public static Context getContext()
     {
-        return _context;
+        return _applicationContext;
     }
     
     public static void startService(String songtitle)
     {
-        Intent intent = new Intent(_context, MediaPlayerService.class);
-        
-        intent.putExtra("wrektitle", songtitle);
-        
-        _context.startService(intent);
+        Intent intent = new Intent(_applicationContext, MediaPlayerService.class);
+        intent.putExtra(INTENT_EXTRA_SONGTITLE, songtitle);
+        _applicationContext.startService(intent);
     }
 
     public static void stopService()
     {
-        Intent intent = new Intent(_context, MediaPlayerService.class);
-        _context.stopService(intent);
+        Log.d(TAG, "stopService");
+        
+        Intent intent = new Intent(_applicationContext, MediaPlayerService.class);
+        _applicationContext.stopService(intent);
         
     }
 
@@ -115,7 +116,13 @@ public class MediaPlayerService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        Log.d(TAG, "onStartCommand");
+        Log.d(TAG, "onStartCommand (flags=" + Integer.toHexString(flags) + ")");
+        
+        // onStartCommand is overloaded to be used as an "update notification with song title" method
+        // onStartCommand will get called even when MediaPlayerPresenter calls startService - even if the service is already running
+        // This allows us to avoid doing the whole "onBind" thing, which is a little extra code for accomplishing what we need
+        // http://stackoverflow.com/questions/5528288/how-do-i-update-the-notification-text-for-a-foreground-service-in-android
+
         
         if (_presenter == null)
         {
@@ -125,7 +132,7 @@ public class MediaPlayerService extends Service
             _fetcher = ScheduleFetcher.getInstance();
         }
 
-        startForegroundHelper(intent.getStringExtra("wrektitle"));
+        startForegroundHelper(intent.getStringExtra(INTENT_EXTRA_SONGTITLE));
 
         // I think NOT_STICKY is the right flag to return here - basically means
         // "if the process is killed due to low system resource,don't bother starting it back up again"

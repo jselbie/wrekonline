@@ -63,7 +63,8 @@ public class MediaPlayerPresenter implements IMetadataCallback
     private int _playlistIndex; // which track is "active"
 
     private boolean _isLiveSource;
-    int _secondaryProgressPercent;
+    private boolean _hasIcyMetaInt;
+    private int _secondaryProgressPercent;
     private MediaPlayerView _view;
     private CountDownTimer _timer;
     private CountDownTimer _timerPauseSafety; // the pause safety timer
@@ -85,6 +86,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         _secondaryProgressPercent = 0;
 
         _isLiveSource = false;
+        _hasIcyMetaInt = false;
         _view = null;
         _timer = null;
         _timerPauseSafety = null;
@@ -239,8 +241,8 @@ public class MediaPlayerPresenter implements IMetadataCallback
         String url = getActiveUrl();
         
         
-        // create the proxy if this is a live source
-        if (_isLiveSource && canProxyBeUsed())
+        // create the proxy if this is a live source with a metadata tag
+        if (_hasIcyMetaInt && canProxyBeUsed())
         {
             this._metadataCallbackMarshaller = new MetadataCallbackMarshaller();
             this._metadataCallbackMarshaller.attach(this);
@@ -308,14 +310,20 @@ public class MediaPlayerPresenter implements IMetadataCallback
         return url;
     }
 
-    public boolean setPlaylist(String title, ArrayList<String> playlist, boolean isLiveSource)
+    public boolean setPlaylist(String title, ArrayList<String> playlist, boolean isLiveSource, boolean hasIcyMetaInt)
     {
         _isLiveSource = isLiveSource;
+        _hasIcyMetaInt = hasIcyMetaInt;
         _playlist = playlist; // weak reference copy. ScheduleItems and Streams
                               // shouldn't modify themselves after schedule is
                               // downloaded
         _playlistIndex = 0;
-        _title = title;
+        
+        if (title != null)
+        {
+            _title = title;
+        }
+        
         return restartPlayer();
     }
 
@@ -540,29 +548,34 @@ public class MediaPlayerPresenter implements IMetadataCallback
             _view.setSeekBarEnabled(seekBarEnabled, duration, position, secondaryProgress);
         }
     }
-
-    private String getTitle()
+    
+    
+    private String getDisplayTitle()
     {
         String message = "";
+        String prefix = "";
         String postfix = "";
         boolean addPostfix = false;
+        String songtitle = getSongTitle();
 
         if ((_state == PlayerState.Started) || (_state == PlayerState.Paused))
         {
-            message = "Now Playing: " + _title;
-            addPostfix = true;
+            prefix = "Now Playing: ";
+            message = songtitle.isEmpty() ? _title : songtitle;
+            addPostfix = true; // in theory, we shouldn't have a song title for non-live streams
         }
         else if (_state == PlayerState.Preparing)
         {
-            message = "Connecting...";
+            prefix = "Connecting...";
         }
         else if (_state == PlayerState.Error)
         {
-            message = "Error";
+            prefix = "Error";
         }
         else if ((_state == PlayerState.Idle) && (_title != null) && !_title.isEmpty())
         {
-            message = "Selected: " + _title;
+            prefix = "Selected: ";
+            message = _title; // show only the show title if we wind up stopped, but with a playlist
             addPostfix = true;
         }
 
@@ -570,8 +583,9 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             postfix = " (" + (_playlistIndex + 1) + " of " + _playlist.size() + ")";
         }
+        
 
-        return message + postfix;
+        return prefix + message + postfix;
     }
     
     private String getSongTitle()
@@ -582,9 +596,10 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             if (_metadata != null)
             {
-                return "Now Playing: " + _metadata.getStreamTitle();
+                message = _metadata.getStreamTitle();
             }
         }
+        
         return message;
     }
 
@@ -691,8 +706,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             _view.setMainButtonState(mainButtonState);
             _view.setTrackButtonsEnabled(prevButtonEnabled, nextButtonEnabled);
-            _view.setTitle(getTitle());
-            _view.setSongTitle(getSongTitle());
+            _view.setTitle(getDisplayTitle());
             updateSeekbarView();
         }
 
@@ -713,14 +727,17 @@ public class MediaPlayerPresenter implements IMetadataCallback
         else if (startService == true)
         {
             String title = _title;
-            String songtitle = (_metadata != null) ? _metadata.getStreamTitle() : "";
+            String songtitle = getSongTitle();
             
             if (songtitle.isEmpty() == false)
             {
                 title = songtitle;
             }
             
+            // "startService" is overloaded to also update the subtitle field of the notification area with the current song title
+            Log.d(TAG, "About to call MediaPlayerService.startService");
             MediaPlayerService.startService(title);
+            Log.d(TAG, "Return from MediaPlayerService.startService");
         }
         
         if (needPauseTimer)
@@ -799,7 +816,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         // When the stream is "paused" by the user, the Android MediaPlayer will still drizzle download bits from the server if its not already completed
         // Hence, the user could pause a stream and exit the activity. Android should eventually kill the process (since the service is stopped), but there's no
         // guarantee. So the pause timer will wake up 5 minutes later and make sure the MediaPlayer is shutdown
-        // If the user returns to the app within 5 minutes
+        // If the user returns to the app within 5 minutes, the pause timer can be reset by unpausing
         //
         // Ideally, when the app goes into the background, we just stop any paused stream immediately, but remember its URL and progress
         // such that when the player is restarted, the stream picks up near where it left off before
@@ -861,6 +878,9 @@ public class MediaPlayerPresenter implements IMetadataCallback
         Log.d(TAG, "onNewMetadataAvailable: " + metadata);
         
         _metadata = new IcecastMetadata(metadata);
+        
+        // updateView will call MediaPlayerService.startService again with the updated song title
+        // see the notes in MediaPlayerService.onStartCommand
         this.updateView();
     }
 

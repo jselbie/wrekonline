@@ -48,7 +48,7 @@ public class MainActivity extends Activity
         // load up our preferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-        MediaPlayerService.setContext(this.getApplicationContext());
+        MediaPlayerService.setApplicationContext(this.getApplicationContext());
     }
 
     @Override

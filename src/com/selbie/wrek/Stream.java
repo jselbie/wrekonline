@@ -25,6 +25,7 @@ public class Stream
     private String _url_m3u;
     private ArrayList<String> _playlist;
     private boolean _isLiveStream;
+    private boolean _hasIcyMetaInt; // indicates that metadata can be retrieved from this stream via the MetaStreamProxy
     
     public Stream()
     {
@@ -32,6 +33,7 @@ public class Stream
         _url_m3u = "";
         _playlist = new ArrayList<String>();
         _isLiveStream = false;
+        _hasIcyMetaInt = false;
     }
     
     public int getBitrate()
@@ -72,7 +74,12 @@ public class Stream
         _isLiveStream = isLiveStream;
     }
     
+    public boolean getHasIcyMetaInt() {
+        return _hasIcyMetaInt;
+    }
     
+    public void setHasIcyMetaInt(boolean hasIcyMetaInt) {
+        _hasIcyMetaInt = hasIcyMetaInt;
+    }
 }
-
 

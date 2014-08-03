@@ -153,7 +153,7 @@ public class ScheduleListFragment extends ListFragment implements ScheduleFetche
         {
             MediaPlayerPresenter presenter = MediaPlayerPresenter.getInstance();
             Log.d(TAG, "Setting playlist for item " + position + " (" + item.getTitle() + ")");
-            presenter.setPlaylist(item.getTitle(), stream.getPlayList(), stream.getIsLiveStream());
+            presenter.setPlaylist(item.getTitle(), stream.getPlayList(), stream.getIsLiveStream(), stream.getHasIcyMetaInt());
         }
         else
         {

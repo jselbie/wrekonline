@@ -43,8 +43,6 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     private ImageButton _playbutton;
     private ImageButton _nextbutton;
     private ImageButton _prevbutton;
-    private TextSwapper _textswapper;
-    
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState)
@@ -72,9 +70,7 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         _timestamp = (TextView)(getView().findViewById(R.id.timestamp));
         
         _tvNowPlaying = (TextView)(getView().findViewById(R.id.tvNowPlaying));
-        _tvNowPlaying.setText(""); // clear out the placeholder value (or any residual string), this also fixes an issue with TextSwapper's duplicate string detection
-        
-        _textswapper = new TextSwapper(_tvNowPlaying);
+        _tvNowPlaying.setText(""); // clear out the placeholder value (or any residual string)
         
         _presenter = MediaPlayerPresenter.getInstance();
         _presenter.attachView(this); // this will call back into us and update everything
@@ -164,9 +160,6 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
         {
             _presenter.detachView(this);
         }
-        
-        // stop all animations and timers
-        _textswapper.stop();
     }
 
     @Override
@@ -234,15 +227,8 @@ public class PlayControlFragment extends Fragment implements MediaPlayerView
     @Override
     public void setTitle(String title)
     {
-        _textswapper.setPrimary(title);
+        this._tvNowPlaying.setText(title);
     }
-    
-    @Override
-    public void setSongTitle(String songtitle)
-    {
-        _textswapper.setSecondary(songtitle);
-    }
-
     
 
 }

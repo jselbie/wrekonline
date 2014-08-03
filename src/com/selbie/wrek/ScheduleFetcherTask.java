@@ -56,7 +56,7 @@ public class ScheduleFetcherTask extends AsyncTask<Void, Integer, ArrayList<Sche
                 String json = ContentDownloader.downloadString(ScheduleFetcherTask.Source);
                 Log.d(TAG, "Attempting parse");
                 JsonHandler handler = new JsonHandler();
-                schedule = handler.ExtractScheduleFromJson(json);
+                schedule = handler.extractScheduleFromJson(json);
                 
                 break;
             }

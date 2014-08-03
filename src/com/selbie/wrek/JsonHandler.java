@@ -25,11 +25,12 @@ import android.util.JsonReader;
 
 public class JsonHandler
 {
-    public Stream ParseStream(JsonReader reader) throws IOException
+    private Stream parseStream(JsonReader reader) throws IOException
     {
         String url_m3u = "";
         int bitrate = -1;
         boolean isLive = false;
+        boolean hasIcyMetaInt = false;
         ArrayList<String> playlist = new ArrayList<String>();
 
         reader.beginObject();
@@ -60,6 +61,10 @@ public class JsonHandler
             {
                 isLive = reader.nextBoolean();
             }
+            else if (name.equals("metaint"))
+            {
+                hasIcyMetaInt = reader.nextBoolean();
+            }
             else
             {
                 reader.skipValue();
@@ -77,6 +82,7 @@ public class JsonHandler
         stream.setBitrate(bitrate);
         stream.setURL(url_m3u);
         stream.setIsLiveStream(isLive);
+        stream.setHasIcyMetaInt(hasIcyMetaInt);
         for (String url : playlist)
         {
             stream.addToPlayList(url);
@@ -84,7 +90,7 @@ public class JsonHandler
         return stream;
     }
 
-    public ScheduleItem ParseItem(JsonReader reader) throws IOException
+    private ScheduleItem parseItem(JsonReader reader) throws IOException
     {
         reader.beginObject();
         String title = null, timestring = null, logoURL = null, genre = null;
@@ -116,7 +122,7 @@ public class JsonHandler
 
                 while (reader.hasNext())
                 {
-                    streams.add(ParseStream(reader));
+                    streams.add(parseStream(reader));
                 }
 
                 reader.endArray();
@@ -148,20 +154,20 @@ public class JsonHandler
         return item;
     }
 
-    public ArrayList<ScheduleItem> ParseItemsArray(JsonReader reader) throws IOException
+    private ArrayList<ScheduleItem> parseItemsArray(JsonReader reader) throws IOException
     {
         ArrayList<ScheduleItem> items = new ArrayList<ScheduleItem>();
 
         reader.beginArray();
         while (reader.hasNext())
         {
-            items.add(ParseItem(reader));
+            items.add(parseItem(reader));
         }
         reader.endArray();
         return items;
     }
 
-    public ArrayList<ScheduleItem> ExtractScheduleFromJson(String str) throws IOException
+    public ArrayList<ScheduleItem> extractScheduleFromJson(String str) throws IOException
     {
         ArrayList<ScheduleItem> items = null;
         JsonReader reader = new JsonReader(new StringReader(str));
@@ -174,7 +180,7 @@ public class JsonHandler
 
             if (name.equals("items"))
             {
-                items = ParseItemsArray(reader);
+                items = parseItemsArray(reader);
             }
             else
             {

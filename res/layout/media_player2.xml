@@ -20,8 +20,10 @@
             android:id="@+id/tvNowPlaying"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center_horizontal"
             android:text="@string/placeholder_nowplaying"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="#ffffffff" />
     </LinearLayout>
 

@@ -245,8 +245,15 @@ public class MetaStreamProxySession implements Runnable
                 
                 if (k.equals("icy-metaint"))
                 {
-                    // todo - decide how to handle a NumberFormatException (which would be really odd)
-                    icymetaint = Integer.parseInt(v);
+                    try
+                    {
+                        icymetaint = Integer.parseInt(v);
+                    }
+                    catch (NumberFormatException nfex)
+                    {
+                        Log.wtf(TAG, "Trying to parse icy-metaint and it just threw a NumberFormatException");
+                        throw new IOException("embedded NumberFormatException", nfex);
+                    }
                 }
                 else
                 {
@@ -269,7 +276,7 @@ public class MetaStreamProxySession implements Runnable
         Log.d(TAG, "---------responsePrelude--------\n" + responsePrelude + "---------------------------");
         
         // now convert to ascii bytes
-        byte [] responsePreludeBytes = responsePrelude.getBytes("UTF-8");
+        byte [] responsePreludeBytes = responsePrelude.getBytes("UTF-8");  // can throw UnsupportedEncodingException (which derives from IOException)
         _clientSocket.getOutputStream().write(responsePreludeBytes);
         
         // now configure the filter to understand the metadata interval and pass it the output stream
