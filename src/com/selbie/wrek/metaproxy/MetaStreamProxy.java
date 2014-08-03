@@ -109,7 +109,6 @@ public class MetaStreamProxy implements Runnable
         
         _exitFlag = true;
         closeAllSessions();
-        
     }
     
     private void cleanupListenSocket()
@@ -206,15 +205,20 @@ public class MetaStreamProxy implements Runnable
             }
             catch (InterruptedIOException iioex)
             {
-                Log.v(TAG, "InterruptedIOException in accept loop");
+                Log.v(TAG, "InterruptedIOException in accept loop (socket accept timeout)");
             }
             catch (IOException ioex)
             {
-                Log.d(TAG, "IOException in accept loop", ioex);
+                Log.e(TAG, "IOException in accept loop", ioex);
             }
         }
         
         cleanupListenSocket();
+        
+        // closeAllSessions will get called by the stop() method in the app thread, but there's a race condition
+        // where addSessions above can get called while we are exiting
+        // so we just call it again
+        closeAllSessions();
     }
     
     private void addSession(MetaStreamProxySession session)
@@ -223,19 +227,26 @@ public class MetaStreamProxy implements Runnable
         
         // should only be be called by the worker thread
         assert(_thread.getId() == Thread.currentThread().getId());
-        _sessions.add(session);
+        
+        synchronized(_sessions)
+        {
+            _sessions.add(session);
+        }
     }
     
     private void closeAllSessions()
     {
         Log.d(TAG, "closeAllSessions");
-        
-        for (MetaStreamProxySession session : _sessions)
+
+        synchronized(_sessions)
         {
-            session.stop();
+            for (MetaStreamProxySession session : _sessions)
+            {
+                session.stop();
+            }
+            
+            _sessions.clear();
         }
-        
-        _sessions.clear();
     }
     
 }

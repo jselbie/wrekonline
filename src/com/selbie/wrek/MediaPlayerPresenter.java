@@ -20,6 +20,7 @@ package com.selbie.wrek;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
@@ -224,7 +225,11 @@ public class MediaPlayerPresenter implements IMetadataCallback
     
     public boolean canProxyBeUsed()
     {
-        return true;
+        Context context = MediaPlayerService.getContext();
+        boolean result = SettingsFragment.isMetadataProxyEnabled(context);
+        
+        Log.d(TAG, "canProxyBeUsed() returns: " + result);
+        return result;
     }
 
     private boolean restartPlayer()

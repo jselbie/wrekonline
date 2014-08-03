@@ -36,6 +36,8 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     public static final int BITRATE_SETTINGS_AUTOMATIC = 0;
     public static final int BITRATE_SETTINGS_HIGH = 1;
     public static final int BITRATE_SETTINGS_LOW = 2;
+    
+    public static final String METADATA_PROXY_KEY = "pref_key_enableproxy";
 
     public static int getBitrateSetting(Context context)
     {
@@ -55,7 +57,14 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         }
 
         return result;
-    }    
+    }
+    
+    public static boolean isMetadataProxyEnabled(Context context)
+    {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean val = sharedPrefs.getBoolean(METADATA_PROXY_KEY, true);
+        return val;
+    }
 
 
     @Override
