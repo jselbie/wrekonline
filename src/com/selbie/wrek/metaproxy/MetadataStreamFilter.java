@@ -20,8 +20,6 @@ package com.selbie.wrek.metaproxy;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import android.util.Log;
-
 public class MetadataStreamFilter
 {
     public final static String TAG = MetadataStreamFilter.class.getSimpleName(); 
@@ -191,8 +189,6 @@ public class MetadataStreamFilter
             _dataCount = 0;
             _metaTotal = 0;
             _metaCount = 0;
-            
-            //Log.d(TAG, "Posting new metadata: " + _latestMetaData.subSequence(0, 20);
             
             if (_callback != null)
             {

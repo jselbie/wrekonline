@@ -19,6 +19,7 @@ package com.selbie.wrek.metaproxy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.Socket;
@@ -62,11 +63,11 @@ public class MetaStreamProxySession implements Runnable
     public void stop()
     {
         Log.d(TAG, "stop");
-        
+
         // this is a soft stop - just set a flag to signal the thread to exit 
         this._exitFlag = true;
     }
-    
+
     @Override
     public void run()
     {
@@ -85,7 +86,7 @@ public class MetaStreamProxySession implements Runnable
         
         Log.d(TAG, "thread has exited");
     }
-    
+
     private void processConnection() throws IOException
     {
         String request = readRequest();
@@ -101,8 +102,8 @@ public class MetaStreamProxySession implements Runnable
         
         cleanupConnection();
     }    
-    
-    
+
+
     private boolean exitCheck()
     {
         if (_exitFlag)
@@ -111,7 +112,7 @@ public class MetaStreamProxySession implements Runnable
         }
         return _exitFlag;
     }
-    
+
     private void cleanupConnection()
     {
         Log.d(TAG, "cleanupConnection");
@@ -179,22 +180,34 @@ public class MetaStreamProxySession implements Runnable
 
     }
     
-    private String getTargetFromUrl(String formattedUrl)
+    private String getTargetFromUrl(String formattedUrl) throws IOException
     {
-        if ((formattedUrl.length() > 0) && (formattedUrl.charAt(0)=='/'))
+        String target = "";
+        Log.d(TAG, "getTargetFromUrl: " + formattedUrl);
+        
+        // decodeOriginalUrl (which is a wrapper for urlDecode) can throw an IllegalArgumentException.  Like the other places in the code where we call UrlDecode, we
+        // catch all RuntimeExceptions as a precaution
+        
+        try
         {
-            return formattedUrl.substring(1);
+            target = MetaStreamProxy.decodeOriginalUrl(formattedUrl);
         }
-        return formattedUrl;
+        catch (RuntimeException rtex)
+        {
+            throw new IOException("runtime exception when decoding url", rtex);
+        }
+        
+        return target;
     }
     
     private void startDownload(String targetURL) throws IOException
     {
         URL url = new URL(targetURL);
         String statusline;
-        String headerstrings;
+        String headerstrings = "";
         String responsePrelude = "";
-        Map<String, List<String>> headers;
+        Map<String, List<String>> headers = null;
+        Set<String> keys = null;
         HttpURLConnection connection = null;
         int chunkLogCount = 0;
         MetadataStreamFilter filter = new MetadataStreamFilter();
@@ -206,8 +219,11 @@ public class MetaStreamProxySession implements Runnable
         }
         
         connection = (HttpURLConnection)url.openConnection();
-        connection.setConnectTimeout(30000);
         
+        // we need to set the timeout values early before the connection is established - otherwise, they may not work
+        connection.setConnectTimeout(20000);
+        connection.setReadTimeout(15000); // give the thread a chance to wake up and exit.
+
         // this is how we request the ICEcast server to send inline metadata within the mp3 stream
         connection.setRequestProperty("Icy-MetaData", "1");
         
@@ -221,9 +237,32 @@ public class MetaStreamProxySession implements Runnable
         // read the headers from the response
         statusline = connection.getHeaderField(null); // the "null" header field is the status line according to the docs
         
+        if (statusline == null)
+        {
+            Log.wtf(TAG, "connection.getHeaderField(null) returned null instead of a statusline");
+            throw new IOException("connection.getHeaderField(null) returned null instead of a statusline");
+        }
+        
         headers = connection.getHeaderFields();
-        headerstrings = "";
-        Set<String> keys = headers.keySet();
+        
+        // With some ad-hoc testing, I had a null pointer exception (crash) in this function, but my source was partially out of sync with the build. It happened as a result 
+        // of toggling the network wifi and mobile data connections on/off while the app was running
+        // It was something to do with the 'headers' or the 'keySet' variable being null. So we'll be a little more defensive in this code path and check for null
+        // where we normally don't expect to
+        
+        if (headers == null)
+        {
+            Log.wtf(TAG, "connection.getHeaderFields returned null");
+            throw new IOException("connection.getHeaderFields returned null");
+        }
+        
+        keys = headers.keySet();
+        
+        if (keys == null)
+        {
+            Log.wtf(TAG, "headers.keySet returned null");
+            throw new IOException("headers.keySet returned null");
+        }
         
         for (String key : keys)
         {
@@ -282,23 +321,32 @@ public class MetaStreamProxySession implements Runnable
         // now configure the filter to understand the metadata interval and pass it the output stream
         // if icymetaint is "0", then that essentially means "no metadata expected"
         filter.init(icymetaint, _clientSocket.getOutputStream(), _metadataCallback);
-        
-        
+
+
         // main loop
         byte [] buffer = new byte[4096];
         while (exitCheck() == false)
         {
             int readresult = 0;
-            connection.setReadTimeout(5000); // give the thread a chance to wake up and exit
             
             try
             {
-                readresult = connection.getInputStream().read(buffer);
+                InputStream inputstream = connection.getInputStream();
+                
+                if (inputstream == null)
+                {
+                    throw new IOException("connection.getInputStream returned null");
+                }
+                
+                readresult = inputstream.read(buffer);
             }
             catch(SocketTimeoutException ex)
             {
                 Log.d(TAG, "timeout waiting for http input stream to deliver some bytes");
-                readresult = 0;
+                Log.d(TAG, "ex.bytesTransferred == " + ex.bytesTransferred);
+                if (ex.bytesTransferred != 0)
+                    Log.e(TAG, "read timed out, but bytesTranserred was non-zero???");
+                readresult = 0; // should this be set to ex.bytesTransferred? That would be weird if there was a timeout exception and data actually transferred
             }
             
             if (readresult == -1)
@@ -314,7 +362,7 @@ public class MetaStreamProxySession implements Runnable
 
             if (readresult > 0)
             {
-                // _clientSocket.getOutputStream().write(buffer, 0, readresult);
+                // // // _clientSocket.getOutputStream().write(buffer, 0, readresult);
                 filter.write(buffer, 0, readresult);
                 
                 if (chunkLogCount < 10)
@@ -326,10 +374,5 @@ public class MetaStreamProxySession implements Runnable
             }
         }
     }
-    
-
-    
-
-    
 
 }

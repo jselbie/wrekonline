@@ -246,7 +246,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         String url = getActiveUrl();
         
         
-        // create the proxy if this is a live source with a metadata tag
+        // create the proxy if this stream supports metadata (live sources only for the part)
         if (_hasIcyMetaInt && canProxyBeUsed())
         {
             this._metadataCallbackMarshaller = new MetadataCallbackMarshaller();
@@ -254,14 +254,20 @@ public class MediaPlayerPresenter implements IMetadataCallback
             
             Log.d(TAG, "Creating MetaStreamProxy instance");
             _metaproxy = MetaStreamProxy.createAndStart(_metadataCallbackMarshaller);
-            proxyport = _metaproxy.getPort();
-            Log.d(TAG, "proxyport is " + proxyport);
-            url = _metaproxy.formatUrl(url);
             
-            Log.d(TAG, "meta proxy created.  Tunnel URL is: " + url);
+            if (_metaproxy == null)
+            {
+                Log.e(TAG, "failed to create metaproxy. No song titles for you.");
+            }
+            else
+            {
+                proxyport = _metaproxy.getPort();
+                Log.d(TAG, "proxyport is " + proxyport);
+                url = _metaproxy.formatUrl(url);
+                Log.d(TAG, "meta proxy created.  Tunnel URL is: " + url);
+            }
         }
         
-
         if (url.isEmpty() == false)
         {
             try
@@ -461,6 +467,8 @@ public class MediaPlayerPresenter implements IMetadataCallback
     {
         if (_state == PlayerState.Preparing)
         {
+            Log.d(TAG, "onPrepared");
+            
             _state = PlayerState.Started;
             _player.start();
             updateView();
@@ -490,6 +498,13 @@ public class MediaPlayerPresenter implements IMetadataCallback
             if (canIncrementPlayListIndex())
             {
                 incrementPlayListIndex();
+                restartPlayer();
+            }
+            else if (_isLiveSource)
+            {
+                // The live streams should never end normally. But when they do, it likely means a transient network error
+                // Simple approach is to just restart the player
+                Log.d(TAG, "restarting for live source");
                 restartPlayer();
             }
             else

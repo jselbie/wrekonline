@@ -18,6 +18,7 @@ package com.selbie.wrek.metaproxy;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -47,6 +48,7 @@ public class MetaStreamProxy implements Runnable
         _listenIP = "127.0.0.1"; 
         _metadataCallback = metadataCallback;
         _threadMadeSocket = false;
+        _listenPort = 0;
     }
     
     private synchronized void waitForSocketReady()
@@ -96,6 +98,14 @@ public class MetaStreamProxy implements Runnable
     {
         MetaStreamProxy proxy = new MetaStreamProxy(metadataCallback);
         proxy.start();
+        
+        if (proxy.getPort() == 0)
+        {
+            Log.d(TAG, "createAndStart - getPort returned 0, which means the socket didn't really initialize.  Returning null");
+            proxy.stop();
+            proxy = null;
+        }
+        
         return proxy;
     }
     
@@ -133,7 +143,6 @@ public class MetaStreamProxy implements Runnable
         }    
     }
     
-    
     public int getPort()
     {
         return _listenPort;
@@ -141,7 +150,22 @@ public class MetaStreamProxy implements Runnable
     
     public String formatUrl(String originalUrl)
     {
-        return ("http://" + _listenIP + ":" + _listenPort + "/" + originalUrl);
+        String encodedUrl = originalUrl;
+        
+        try
+        {
+            encodedUrl = encodeOriginalUrl(_listenIP, _listenPort, originalUrl);
+        }
+        catch(UnsupportedEncodingException ex)
+        {
+            Log.e(TAG, "formatUrl hit an unsupported encoding exception", ex);
+        }
+        catch(RuntimeException rtex)
+        {
+            Log.e(TAG, "formatUrl hit a runtime exception", rtex);
+        }
+        
+        return encodedUrl; // in case of error, return back the original URL.  This will bypass the metadata proxy listener, but is better than not connecting at all
     }
     
 
@@ -174,9 +198,23 @@ public class MetaStreamProxy implements Runnable
     private void initListenSocket() throws IOException
     {
         // ideally, we'd init the socket on the UI thread, but Android won't let us do that
-        _listenSocket = new ServerSocket(0, 10, InetAddress.getLocalHost());
+
+        InetAddress addrLoopback = InetAddress.getByName(null); // will return either ::1 or 127.0.01
+        
+        _listenSocket = new ServerSocket(0, 10, addrLoopback);
         _listenPort = _listenSocket.getLocalPort();
-        _listenIP = ((InetSocketAddress)(_listenSocket.getLocalSocketAddress())).getAddress().getHostAddress();
+        
+        InetSocketAddress localSocketAddress = (InetSocketAddress)(_listenSocket.getLocalSocketAddress());
+        InetAddress addrLocal = localSocketAddress.getAddress();
+        
+        _listenIP = addrLocal.getHostAddress();
+        
+        if (addrLocal instanceof java.net.Inet6Address)
+        {
+            // RFC 2732. Format for Literal IPv6 Addresses in URLs. Which basically says, "put brackets around the IPv6 address"  
+            _listenIP = "[" + _listenIP + "]";
+        }
+        
         _listenSocket.setSoTimeout(5000); // wake up every 5 seconds to check the exit state
         
         notifySocketIsReady();
@@ -205,7 +243,7 @@ public class MetaStreamProxy implements Runnable
             }
             catch (InterruptedIOException iioex)
             {
-                Log.v(TAG, "InterruptedIOException in accept loop (socket accept timeout)");
+                // to be expected every 5 seconds;
             }
             catch (IOException ioex)
             {
@@ -249,4 +287,29 @@ public class MetaStreamProxy implements Runnable
         }
     }
     
+    static public String encodeOriginalUrl(String listenIP, int listenPort, String embeddedUrl) throws UnsupportedEncodingException
+    {
+        String encodedUrl = "http://" +  listenIP + ":" + listenPort + "/" + java.net.URLEncoder.encode(embeddedUrl, "UTF-8");
+        return encodedUrl;
+    }
+    
+    static public String decodeOriginalUrl(String formattedUrl) throws IOException
+    {
+        String targetUrlEncoded = formattedUrl;
+        String targetUrlDecoded = "";
+        
+        // strip off the leading forward slash from the resource request.  Everything to the right of it is another URL that's been URL encoded
+        if ((targetUrlEncoded.length() > 0) && (targetUrlEncoded.charAt(0)=='/'))
+        {
+            targetUrlEncoded = targetUrlEncoded.substring(1);
+        }
+        else
+        {
+            Log.wtf(TAG, "decodeOriginalUrl: expected string to begin with a forward slash");
+        }
+        
+        targetUrlDecoded = java.net.URLDecoder.decode(targetUrlEncoded, "UTF-8");
+        
+        return targetUrlDecoded;
+    }
 }
