@@ -1,7 +1,7 @@
 WREK Online For Android
 =======================
 
-![alt text](/res/drawable/logo.png "WREK Online for Android")
+![alt text](/app/src/main/res/drawable/logo.png "WREK Online for Android")
 
 WREK Online for Android
 
