@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    
+    <array name="bitrates_entries">
+        <item>@string/bitrate_entry_automatic</item>
+        <item>@string/bitrate_entry_high</item>
+        <item>@string/bitrate_entry_low</item>
+    </array>
+    
+    <array name="bitrates_values">
+        <item>@string/bitrate_value_automatic</item>
+        <item>@string/bitrate_value_high</item>
+        <item>@string/bitrate_value_low</item>
+    </array>
+    
+    <array name="bitrates_summary">
+        <item>@string/bitrate_summary_automatic</item>
+        <item>@string/bitrate_summary_high</item>
+        <item>@string/bitrate_summary_low</item>
+    </array>
+    
+    
+</resources>

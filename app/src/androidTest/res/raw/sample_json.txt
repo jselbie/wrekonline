@@ -1,0 +1,1199 @@
+{"items": [
+    {
+        "streams": [
+            {
+                "playlist": ["http://streaming.wrek.org:8000/wrek_live-24kb-mono"],
+                "bitrate": 24,
+                "metaint": true,
+                "live": true,
+                "url_m3u": "http://streaming.wrek.org:8000/wrek_live-24kb-mono.m3u"
+            },
+            {
+                "playlist": ["http://streaming.wrek.org:8000/wrek_live-128kb"],
+                "bitrate": 128,
+                "metaint": true,
+                "live": true,
+                "url_m3u": "http://streaming.wrek.org:8000/wrek_live-128kb.m3u"
+            }
+        ],
+        "genre": "What's on the air right now",
+        "logo": "http://www.selbie.com/wrek/radio2.png",
+        "time": "",
+        "title": "Live air stream"
+    },
+    {
+        "streams": [{
+            "playlist": ["http://streaming.wrek.org:8000/wrek_HD-2"],
+            "bitrate": 128,
+            "metaint": true,
+            "live": true,
+            "url_m3u": "http://streaming.wrek.org:8000/wrek_HD-2.m3u"
+        }],
+        "genre": "Alternate programming",
+        "logo": "http://www.selbie.com/wrek/hd.png",
+        "time": "",
+        "title": "HD2 Subchannel"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri0000.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0030.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0100.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/ATM_50000.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri0000.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0030.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0100.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/ATM_50000.m3u"
+            }
+        ],
+        "genre": "Ambient, drone, spaced-out",
+        "logo": "http://www.selbie.com/wrek/atmospherics.png",
+        "time": "Fri 8/1 12:00 AM",
+        "title": "Atmospherics"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri0600.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0630.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0700.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0730.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0800.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0830.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/CL_50600.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri0600.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0630.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0700.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0730.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0800.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0830.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/CL_50600.m3u"
+            }
+        ],
+        "genre": "Classical (Traditional and contemporary)",
+        "logo": "http://www.selbie.com/wrek/classics.png",
+        "time": "Fri 8/1 6:00 AM",
+        "title": "The Classics"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri0900.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri0930.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1000.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1030.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1100.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1130.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/JAZZ_50900.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri0900.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri0930.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1000.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1030.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1100.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1130.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/JAZZ_50900.m3u"
+            }
+        ],
+        "genre": "Jazz",
+        "logo": "http://www.selbie.com/wrek/justjazz.png",
+        "time": "Fri 8/1 9:00 AM",
+        "title": "Just Jazz"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri1300.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1330.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1400.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1430.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1500.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1530.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1600.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1630.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/RRR_51300.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri1300.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1330.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1400.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1430.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1500.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1530.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1600.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1630.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/RRR_51300.m3u"
+            }
+        ],
+        "genre": "Indie rock, Blues, Hip-Hop, and more",
+        "logo": "http://www.selbie.com/wrek/rrr.png",
+        "time": "Fri 8/1 1:00 PM",
+        "title": "Rock, Rhythm, and Roll"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Mon1200.mp3",
+                    "http://archive.wrek.org/main/24kb/Mon1230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/NAL.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Mon1200.mp3",
+                    "http://archive.wrek.org/main/128kb/Mon1230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/NAL.m3u"
+            }
+        ],
+        "genre": "Talk, Interview",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/NAL.png",
+        "time": "Mon 7/28 12:00 PM",
+        "title": "North Avenue Lounge"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Mon1900.mp3",
+                    "http://archive.wrek.org/main/24kb/Mon1930.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/KN.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Mon1900.mp3",
+                    "http://archive.wrek.org/main/128kb/Mon1930.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/KN.m3u"
+            }
+        ],
+        "genre": "Jewish, Klezmer, Yiddish, International",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/KN.png",
+        "time": "Mon 7/28 7:00 PM",
+        "title": "Kosher Noise"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Mon2000.mp3",
+                    "http://archive.wrek.org/main/24kb/Mon2030.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/SLAW.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Mon2000.mp3",
+                    "http://archive.wrek.org/main/128kb/Mon2030.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/SLAW.m3u"
+            }
+        ],
+        "genre": "irish, scottish, welsh, celtic",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/SLAW.png",
+        "time": "Mon 7/28 8:00 PM",
+        "title": "Shillelagh Law"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Mon2100.mp3",
+                    "http://archive.wrek.org/main/24kb/Mon2130.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/SSV.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Mon2100.mp3",
+                    "http://archive.wrek.org/main/128kb/Mon2130.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/SSV.m3u"
+            }
+        ],
+        "genre": "World, African, Afro-Beat",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/SSV.png",
+        "time": "Mon 7/28 9:00 PM",
+        "title": "Sub-Saharan Vibes"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Mon2200.mp3",
+                    "http://archive.wrek.org/main/24kb/Mon2230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/LOCA.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Mon2200.mp3",
+                    "http://archive.wrek.org/main/128kb/Mon2230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/LOCA.m3u"
+            }
+        ],
+        "genre": "Atlanta area music",
+        "logo": "http://www.selbie.com/wrek/locals.png",
+        "time": "Mon 7/28 10:00 PM",
+        "title": "The Locals"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Tue1200.mp3",
+                    "http://archive.wrek.org/main/24kb/Tue1230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/LTB.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Tue1200.mp3",
+                    "http://archive.wrek.org/main/128kb/Tue1230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/LTB.m3u"
+            }
+        ],
+        "genre": "Talk, Interview",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/LTB.png",
+        "time": "Tue 7/29 12:00 PM",
+        "title": "Let's Talk Business"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Tue1800.mp3",
+                    "http://archive.wrek.org/main/24kb/Tue1830.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/GS.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Tue1800.mp3",
+                    "http://archive.wrek.org/main/128kb/Tue1830.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/GS.m3u"
+            }
+        ],
+        "genre": "Indie, Twee Pop, Slowcore, Indietronic",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/GS.png",
+        "time": "Tue 7/29 6:00 PM",
+        "title": "Goldsoundz"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Tue1900.mp3",
+                    "http://archive.wrek.org/main/24kb/Tue1930.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/UGR.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Tue1900.mp3",
+                    "http://archive.wrek.org/main/128kb/Tue1930.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/UGR.m3u"
+            }
+        ],
+        "genre": "Local, Historical, Live",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/UGR.png",
+        "time": "Tue 7/29 7:00 PM",
+        "title": "Underground Recordings"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Tue2000.mp3",
+                    "http://archive.wrek.org/main/24kb/Tue2030.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/RB.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Tue2000.mp3",
+                    "http://archive.wrek.org/main/128kb/Tue2030.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/RB.m3u"
+            }
+        ],
+        "genre": "Hardcore, Punk",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/RB.png",
+        "time": "Tue 7/29 8:00 PM",
+        "title": "Radiobomb"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Tue2100.mp3",
+                    "http://archive.wrek.org/main/24kb/Tue2130.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/TLBS.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Tue2100.mp3",
+                    "http://archive.wrek.org/main/128kb/Tue2130.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/TLBS.m3u"
+            }
+        ],
+        "genre": "Surf, Rockabilly",
+        "logo": "http://www.selbie.com/wrek/LB3.png",
+        "time": "Tue 7/29 9:00 PM",
+        "title": "The Longboards Show"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Tue2200.mp3",
+                    "http://archive.wrek.org/main/24kb/Tue2230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/LAW.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Tue2200.mp3",
+                    "http://archive.wrek.org/main/128kb/Tue2230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/LAW.m3u"
+            }
+        ],
+        "genre": "Live, Local",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/LAW.png",
+        "time": "Tue 7/29 10:00 PM",
+        "title": "Live at WREK"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Tue2300.mp3",
+                    "http://archive.wrek.org/main/24kb/Tue2330.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/NF.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Tue2300.mp3",
+                    "http://archive.wrek.org/main/128kb/Tue2330.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/NF.m3u"
+            }
+        ],
+        "genre": "Punk, Garage, Girl Group, Power Pop",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/NF.png",
+        "time": "Tue 7/29 11:00 PM",
+        "title": "New Forces"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Wed1200.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed1230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/BLBX.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Wed1200.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed1230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/BLBX.m3u"
+            }
+        ],
+        "genre": "Talk, Science",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/BLBX.png",
+        "time": "Wed 7/30 12:00 PM",
+        "title": "Inside the Black Box"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Wed1800.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed1830.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/RWR.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Wed1800.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed1830.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/RWR.m3u"
+            }
+        ],
+        "genre": "Talk, Sports",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/RWR.png",
+        "time": "Wed 7/30 6:00 PM",
+        "title": "Ramblin' WREK Report"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Wed1900.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed1930.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed2000.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed2030.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/MOB.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Wed1900.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed1930.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed2000.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed2030.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/MOB.m3u"
+            }
+        ],
+        "genre": "Electronic, Experimental, Ambient, Bitrock",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/MOB.png",
+        "time": "Wed 7/30 7:00 PM",
+        "title": "Mobius"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Wed2100.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed2130.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/DAM.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Wed2100.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed2130.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/DAM.m3u"
+            }
+        ],
+        "genre": "Noise, Jazz, Avant-Garde, Improv",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/DAM.png",
+        "time": "Wed 7/30 9:00 PM",
+        "title": "Destroy All Music"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Wed2200.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed2230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/FR.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Wed2200.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed2230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/FR.m3u"
+            }
+        ],
+        "genre": "Noise, Experimental, Avant-Garde",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/FR.png",
+        "time": "Wed 7/30 10:00 PM",
+        "title": "Friction"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Wed2300.mp3",
+                    "http://archive.wrek.org/main/24kb/Wed2330.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/PO.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Wed2300.mp3",
+                    "http://archive.wrek.org/main/128kb/Wed2330.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/PO.m3u"
+            }
+        ],
+        "genre": "Psychedelic Rock, Space Rock, Drone, Shoegaze",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/PO.png",
+        "time": "Wed 7/30 11:00 PM",
+        "title": "Psych-Out!"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Thu1800.mp3",
+                    "http://archive.wrek.org/main/24kb/Thu1830.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/TT.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Thu1800.mp3",
+                    "http://archive.wrek.org/main/128kb/Thu1830.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/TT.m3u"
+            }
+        ],
+        "genre": "Talk, Interview",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/TT.png",
+        "time": "Thu 7/31 6:00 PM",
+        "title": "Tech Talk"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Thu1900.mp3",
+                    "http://archive.wrek.org/main/24kb/Thu1930.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/SCFI.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Thu1900.mp3",
+                    "http://archive.wrek.org/main/128kb/Thu1930.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/SCFI.m3u"
+            }
+        ],
+        "genre": "Talk, Science Fiction",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/SCFI.png",
+        "time": "Thu 7/31 7:00 PM",
+        "title": "Sci Fi Lab"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Thu2000.mp3",
+                    "http://archive.wrek.org/main/24kb/Thu2030.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/FFFS.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Thu2000.mp3",
+                    "http://archive.wrek.org/main/128kb/Thu2030.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/FFFS.m3u"
+            }
+        ],
+        "genre": "Reggae, Ska, Dub, Two-tone",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/FFFS.png",
+        "time": "Thu 7/31 8:00 PM",
+        "title": "54-46"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Thu2100.mp3",
+                    "http://archive.wrek.org/main/24kb/Thu2130.mp3",
+                    "http://archive.wrek.org/main/24kb/Thu2200.mp3",
+                    "http://archive.wrek.org/main/24kb/Thu2230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/WRR.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Thu2100.mp3",
+                    "http://archive.wrek.org/main/128kb/Thu2130.mp3",
+                    "http://archive.wrek.org/main/128kb/Thu2200.mp3",
+                    "http://archive.wrek.org/main/128kb/Thu2230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/WRR.m3u"
+            }
+        ],
+        "genre": "Hip Hop, Funk, Soul, Turntablism",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/WRR.png",
+        "time": "Thu 7/31 9:00 PM",
+        "title": "WREKroom Renaissance"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Thu2300.mp3",
+                    "http://archive.wrek.org/main/24kb/Thu2330.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/EB.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Thu2300.mp3",
+                    "http://archive.wrek.org/main/128kb/Thu2330.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/EB.m3u"
+            }
+        ],
+        "genre": "Funk",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/EB.png",
+        "time": "Thu 7/31 11:00 PM",
+        "title": "Electric Boogaloo"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri1200.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1230.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/LITS.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri1200.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1230.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/LITS.m3u"
+            }
+        ],
+        "genre": "Indie, Pop Rock, Alt Rock, New Wave",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/LITS.png",
+        "time": "Fri 8/1 12:00 PM",
+        "title": "Lost in the Stacks"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri1700.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1730.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/CC.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri1700.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1730.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/CC.m3u"
+            }
+        ],
+        "genre": "Country, Folk, Bluegrass, Country Blues",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/CC.png",
+        "time": "Fri 8/1 5:00 PM",
+        "title": "Country Classics"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri1800.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1830.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1900.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri1930.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/FNFF.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri1800.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1830.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1900.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri1930.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/FNFF.m3u"
+            }
+        ],
+        "genre": "Blues, Blues Rock, Live, Local",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/FNFF.png",
+        "time": "Fri 8/1 6:00 PM",
+        "title": "Friday Night Fish Fry"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Fri2000.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri2030.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri2100.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri2130.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri2200.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri2230.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri2300.mp3",
+                    "http://archive.wrek.org/main/24kb/Fri2330.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/SH.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Fri2000.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri2030.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri2100.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri2130.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri2200.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri2230.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri2300.mp3",
+                    "http://archive.wrek.org/main/128kb/Fri2330.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/SH.m3u"
+            }
+        ],
+        "genre": "Classic Rock, Boogie Rock, Progressive Rock, Garage Rock",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/SH.png",
+        "time": "Fri 8/1 8:00 PM",
+        "title": "Stonehenge"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sat0000.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0030.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0100.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0130.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0200.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0230.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0300.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0330.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0400.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0430.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0500.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat0530.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/WRKG.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sat0000.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0030.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0100.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0130.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0200.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0230.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0300.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0330.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0400.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0430.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0500.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat0530.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/WRKG.m3u"
+            }
+        ],
+        "genre": "Metal, Black Metal, Death Metal, Heavy Metal",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/WRKG.png",
+        "time": "Sat 8/2 12:00 AM",
+        "title": "WREKage"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sat1800.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat1830.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat1900.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat1930.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/DH.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sat1800.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat1830.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat1900.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat1930.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/DH.m3u"
+            }
+        ],
+        "genre": "Big Band, Jazz, Bebop, Swing",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/DH.png",
+        "time": "Sat 8/2 6:00 PM",
+        "title": "The Desoto Hour"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sat2000.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat2030.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/CAS.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sat2000.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat2030.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/CAS.m3u"
+            }
+        ],
+        "genre": "Chillout, Downtempo, Lounge, Trip-hop",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/CAS.png",
+        "time": "Sat 8/2 8:00 PM",
+        "title": "Coffee and Sushi"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sat2100.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat2130.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat2200.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat2230.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat2300.mp3",
+                    "http://archive.wrek.org/main/24kb/Sat2330.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/EDM.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sat2100.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat2130.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat2200.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat2230.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat2300.mp3",
+                    "http://archive.wrek.org/main/128kb/Sat2330.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/EDM.m3u"
+            }
+        ],
+        "genre": "Trance, Drum'n'Bass, House, Techno",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/EDM.png",
+        "time": "Sat 8/2 9:00 PM",
+        "title": "EDM Sound System"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sun0000.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun0030.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/HOS.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sun0000.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun0030.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/HOS.m3u"
+            }
+        ],
+        "genre": "",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/HOS.png",
+        "time": "Sun 7/27 12:00 AM",
+        "title": "Hour of Slack"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sun0100.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun0130.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/BSTF.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sun0100.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun0130.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/BSTF.m3u"
+            }
+        ],
+        "genre": "",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/BSTF.png",
+        "time": "Sun 7/27 1:00 AM",
+        "title": "Bob's Slacktime Funhouse"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sun1800.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun1830.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/MODE.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sun1800.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun1830.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/MODE.m3u"
+            }
+        ],
+        "genre": "Video Game, 8-bit, Drum'n'Bass, Techno",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/MODE.png",
+        "time": "Sun 7/27 6:00 PM",
+        "title": "Mode 7"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sun1900.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun1930.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun2000.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun2030.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/SS.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sun1900.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun1930.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun2000.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun2030.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/SS.m3u"
+            }
+        ],
+        "genre": "",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/SS.png",
+        "time": "Sun 7/27 7:00 PM",
+        "title": "Sunday Special"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sun2100.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun2130.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/BAPR.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sun2100.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun2130.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/BAPR.m3u"
+            }
+        ],
+        "genre": "Bluegrass, Roots, Appalachian, Historical",
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/BAPR.png",
+        "time": "Sun 7/27 9:00 PM",
+        "title": "Back Alley Pork Roost"
+    },
+    {
+        "streams": [
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/24kb/Sun2200.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun2230.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun2300.mp3",
+                    "http://archive.wrek.org/main/24kb/Sun2330.mp3"
+                ],
+                "bitrate": 24,
+                "live": false,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/24kbs/current/PC.m3u"
+            },
+            {
+                "playlist": [
+                    "http://archive.wrek.org/main/128kb/Sun2200.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun2230.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun2300.mp3",
+                    "http://archive.wrek.org/main/128kb/Sun2330.mp3"
+                ],
+                "bitrate": 128,
+                "live": false,
+                "test_stream_attribute" : 123,
+                "url_m3u": "http://www.wrek.org/playlist.php/main/128kbs/current/PC.m3u"
+            }
+        ],
+        "genre": "New Wave, Punk, Electronic",
+        "test_item_attribute" : 123,
+        "logo": "http://www.wrek.org/wp-content/themes/wrek/images/ss_icons/PC.png",
+        "time": "Sun 7/27 10:00 PM",
+        "title": "Personality Crisis"
+    }
+]}
