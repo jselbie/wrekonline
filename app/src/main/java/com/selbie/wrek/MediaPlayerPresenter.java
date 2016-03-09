@@ -541,10 +541,10 @@ public class MediaPlayerPresenter implements IMetadataCallback
         // For some reason with the WREK streams, there is an early
         // call of onBufferingUpdate(100) prior to onPrepared.  This causes the displayed buffering line on the seek control
         // to become a solid line for about 1 second after the start of the stream.  The workaround is
-        // to just ignore onBufferingUpdate while in the Preparing state
-        if (_state == PlayerState.Preparing)
+        // to just ignore this
+        if ((_state == PlayerState.Preparing) && (percent == 100) && (_secondaryProgressPercent==0))
         {
-            Log.d(TAG, "onBufferingUpdate - ignoring value while in Preparing state. (percent==" + percent + ")");
+            Log.d(TAG, "onBufferingUpdate(100) invoked while in preparing state - ignoring");
         }
         else if (_secondaryProgressPercent != percent)
         {

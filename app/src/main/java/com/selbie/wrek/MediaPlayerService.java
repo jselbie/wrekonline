@@ -16,7 +16,7 @@
 
 package com.selbie.wrek;
 
-import android.annotation.SuppressLint;
+
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -78,22 +78,28 @@ public class MediaPlayerService extends Service
     }
 
     @TargetApi(21)
-    Notification.Builder setColorOnBuilderWithReflection(Notification.Builder builder, int color)
+    void setColorOnBuilderWithReflection(Notification.Builder builder, int color)
     {
-        Class [] paramInt = {Integer.TYPE};
+        // Since we are compiling on SDK 19, we're using reflection to get to the Color API
 
         try {
+            Class [] paramInt = {Integer.TYPE};
             Method setColor = builder.getClass().getDeclaredMethod("setColor", paramInt);
-            setColor.invoke(builder, color);
-        } catch (ReflectiveOperationException e) {
-            Log.d(TAG, "ReflectiveOperationException", e);
+            if (setColor != null) {
+                setColor.invoke(builder, color);
+            }
+        } catch (NoSuchMethodException e) {
+           Log.d(TAG, "NoSuchMethodException", e);
+        } catch (IllegalAccessException e) {
+            Log.d(TAG, "IllegalAccessException", e);
+        } catch (InvocationTargetException e) {
+            Log.d(TAG, "InvocationTargetException", e);
+        } catch (IllegalArgumentException e) {
+            Log.d(TAG, "IllegalArgumentException", e);
         }
-
-        return builder;
     }
 
     @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
     private void startForegroundHelper(String songtitle)
     {
         Notification notification = null;
@@ -104,35 +110,29 @@ public class MediaPlayerService extends Service
         pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         
         String title = this.getResources().getString(R.string.app_name);
-        //String subtext = this.getResources().getString(R.string.app_station_id);
         String subtext = (songtitle != null) ? songtitle : "";
 
-        // for lollipop and above, we can use a large 150px icon and Android will scale it down for us
-        int large_notification_resource_id = (android.os.Build.VERSION.SDK_INT >= 21) ? R.drawable.logo : R.drawable.notification_large;
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentTitle(title);
+        builder.setContentText(subtext);
+        builder.setSmallIcon(R.drawable.notification);
+        if (Build.VERSION.SDK_INT < 21) {
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.notification_large);
+            builder.setLargeIcon(bmp);
+        } else {
+            // on Lollipop and on up, just use a small icon, but surround it with a dark grey circle
+            // the setColor API is available on on API 21 and up
+            int darkgrey = Color.argb(0xff, 0x32, 0x30, 0x31);
+            setColorOnBuilderWithReflection(builder, darkgrey);
+        }
+        builder.setContentIntent(pendingIntent);
 
-        if (android.os.Build.VERSION.SDK_INT >= 16)
-        {
-            Notification.Builder builder = new Notification.Builder(this);
-
-            builder = builder.setContentTitle(title).setContentText(subtext);
-            builder = builder.setWhen(System.currentTimeMillis());
-            builder = builder.setSmallIcon(R.drawable.notification);
-
-            if (Build.VERSION.SDK_INT < 21) {
-                builder = builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), large_notification_resource_id));
-            }
-            else  {
-                // because we are still building with SDK 19, we can only invoke setColor via reflection
-                // when we upgrade to a newer SDK, we can just say "builder = builder.setColor(Color.Black);"
-                builder = setColorOnBuilderWithReflection(builder, Color.BLACK);
-            }
-            builder = builder.setContentIntent(pendingIntent);
+        if (Build.VERSION.SDK_INT >= 16) {
             notification = builder.build();
         }
-        else
-        {
-            notification = new Notification(R.drawable.notification, title, System.currentTimeMillis());
-            notification.setLatestEventInfo(this, title, subtext, pendingIntent);
+        else {
+            // for Android 14/15
+            notification = builder.getNotification();
         }
 
         startForeground(1, notification);
