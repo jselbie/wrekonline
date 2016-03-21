@@ -80,7 +80,7 @@ public class MediaPlayerService extends Service
     @TargetApi(21)
     void setColorOnBuilderWithReflection(Notification.Builder builder, int color)
     {
-        // Since we are compiling on SDK 19, we're using reflection to get to the Color API
+        // Since we are still compiling on SDK 19, we're using reflection to get to the Color API
 
         try {
             Class [] paramInt = {Integer.TYPE};
@@ -100,15 +100,15 @@ public class MediaPlayerService extends Service
     }
 
     @SuppressWarnings("deprecation")
-    private void startForegroundHelper(String songtitle)
-    {
-        Notification notification = null;
-        PendingIntent pendingIntent = null;
+    Notification createNotification(String songtitle) {
+
+        Notification notification;
+        PendingIntent pendingIntent;
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        
+
         String title = this.getResources().getString(R.string.app_name);
         String subtext = (songtitle != null) ? songtitle : "";
 
@@ -134,7 +134,13 @@ public class MediaPlayerService extends Service
             // for Android 14/15
             notification = builder.getNotification();
         }
+        return notification;
+    }
 
+
+    private void startForegroundHelper(String songtitle)
+    {
+        Notification notification = createNotification(songtitle);
         startForeground(1, notification);
     }
 

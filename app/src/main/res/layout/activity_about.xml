@@ -62,10 +62,11 @@
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/apache_dutta" />
     
     <View android:layout_width="match_parent" android:layout_height="1px" android:background="#FF000000" android:layout_marginTop="20dp" android:layout_marginBottom="10dp" />
+
     <!--  ScrollView will clip some of the content unless there is content padding at the end of the layout -->
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="\n\n\n" />
-    
-    
+    <!-- It's also secretly where we can spew some debug info. See AboutActivity.java -->
+    <TextView android:id="@+id/tvBuildInfo" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFDDDDDD" android:text="\n\n\n"/>
+
 </LinearLayout>
 
 </ScrollView>
