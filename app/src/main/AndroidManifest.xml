@@ -29,6 +29,12 @@
 
         <service android:name=".MediaPlayerService" />
 
+        <receiver android:name=".NotificationReceiver">
+            <intent-filter>
+                <action android:name="com.selbie.wrek.notification" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

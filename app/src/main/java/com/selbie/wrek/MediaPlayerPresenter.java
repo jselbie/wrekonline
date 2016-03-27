@@ -760,6 +760,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             String title = _title;
             String songtitle = getSongTitle();
+            songtitle = songtitle.replaceFirst(" - ", "\n"); // convert into two lines
             
             if (songtitle.isEmpty() == false)
             {
@@ -768,7 +769,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
             
             // "startService" is overloaded to also update the subtitle field of the notification area with the current song title
             Log.d(TAG, "About to call MediaPlayerService.startService");
-            MediaPlayerService.startService(title);
+            MediaPlayerService.startService(title, _isLiveSource, prevButtonEnabled, nextButtonEnabled);
             Log.d(TAG, "Return from MediaPlayerService.startService");
         }
         

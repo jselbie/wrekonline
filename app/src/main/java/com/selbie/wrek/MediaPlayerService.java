@@ -29,6 +29,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.widget.RemoteViews;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +39,16 @@ import java.lang.reflect.Method;
 public class MediaPlayerService extends Service
 {
     public final static String TAG = MediaPlayerService.class.getSimpleName();
-    public final static String INTENT_EXTRA_SONGTITLE = "mps_songtitle";
+    public final static String INTENT_EXTRA_SONGTITLE =   "com.selbie.wrek.songtitle";
+    public final static String INTENT_EXTRA_ISLIVE =      "com.selbie.wrek.islive";
+    public final static String INTENT_EXTRA_ENABLE_PREV = "com.selbie.wrek.enable.prev";
+    public final static String INTENT_EXTRA_ENABLE_NEXT = "com.selbie.wrek.enable.next";
+    public final static String INTENT_BUTTON_CLICK =      "com.selbie.wrek.notification";
+    public final static String INTENT_EXTRA_EVENTCODE =   "com.selbie.wrek.eventcode";
+
+    public final static int EVENTCODE_PREV = 22;
+    public final static int EVENTCODE_NEXT = 33;
+    public final static int EVENTCODE_STOP = 44;
 
     MediaPlayerPresenter _presenter;
     ScheduleFetcher _fetcher;
@@ -54,20 +65,23 @@ public class MediaPlayerService extends Service
         return _applicationContext;
     }
     
-    public static void startService(String songtitle)
+    public static void startService(String songTitle, boolean isLive, boolean enablePrev, boolean enableNext)
     {
         Intent intent = new Intent(_applicationContext, MediaPlayerService.class);
-        intent.putExtra(INTENT_EXTRA_SONGTITLE, songtitle);
+        intent.putExtra(INTENT_EXTRA_SONGTITLE, songTitle);
+        intent.putExtra(INTENT_EXTRA_ISLIVE, isLive);
+        intent.putExtra(INTENT_EXTRA_ENABLE_PREV, enablePrev);
+        intent.putExtra(INTENT_EXTRA_ENABLE_NEXT, enableNext);
         _applicationContext.startService(intent);
     }
 
     public static void stopService()
     {
         Log.d(TAG, "stopService");
-        
+
         Intent intent = new Intent(_applicationContext, MediaPlayerService.class);
         _applicationContext.stopService(intent);
-        
+
     }
 
     @Override
@@ -75,6 +89,17 @@ public class MediaPlayerService extends Service
     {
         // TODO Auto-generated method stub
         return null;
+    }
+
+
+    PendingIntent createPendingIntentForNotificationButton(int eventCode)
+    {
+        Intent buttonClickIntent = new Intent(INTENT_BUTTON_CLICK);
+
+        buttonClickIntent.putExtra(INTENT_EXTRA_EVENTCODE, eventCode);
+
+        // must pass a unique requestCode, otherwise the previously created PendingIntent is returned
+        return PendingIntent.getBroadcast(this, eventCode, buttonClickIntent, Intent.FILL_IN_DATA);
     }
 
     @TargetApi(21)
@@ -99,15 +124,20 @@ public class MediaPlayerService extends Service
         }
     }
 
+    PendingIntent createPendingIntent() {
+        PendingIntent pendingIntent;
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        return pendingIntent;
+
+    }
+
     @SuppressWarnings("deprecation")
     Notification createNotification(String songtitle) {
 
         Notification notification;
-        PendingIntent pendingIntent;
-
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        PendingIntent pendingIntent = createPendingIntent();
 
         String title = this.getResources().getString(R.string.app_name);
         String subtext = (songtitle != null) ? songtitle : "";
@@ -137,18 +167,51 @@ public class MediaPlayerService extends Service
         return notification;
     }
 
+    @TargetApi(21)
+    Notification createModernNotification(String songTitle, boolean isLive, boolean enablePrev, boolean enableNext) {
 
-    private void startForegroundHelper(String songtitle)
+        Notification notification;
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification);
+
+        remoteViews.setTextViewText(R.id.notification_songtitle, songTitle);
+
+        remoteViews.setBoolean(R.id.notification_button_prev, "setEnabled", enablePrev);
+        remoteViews.setBoolean(R.id.notification_button_next, "setEnabled", enableNext);
+
+        // For the live streams (where previous and next are both disabled, just hide them both)
+        // This gives more room for the song title to be shown without getting truncated
+        remoteViews.setViewVisibility(R.id.notification_button_prev, isLive ? View.GONE : View.VISIBLE);
+        remoteViews.setViewVisibility(R.id.notification_button_next, isLive ? View.GONE : View.VISIBLE);
+
+        PendingIntent buttonIntentPrev = enablePrev ? createPendingIntentForNotificationButton(EVENTCODE_PREV) : null;
+        PendingIntent buttonIntentNext = enableNext ? createPendingIntentForNotificationButton(EVENTCODE_NEXT) : null;
+        remoteViews.setOnClickPendingIntent(R.id.notification_button_prev, buttonIntentPrev);
+        remoteViews.setOnClickPendingIntent(R.id.notification_button_next, buttonIntentNext);
+
+        remoteViews.setOnClickPendingIntent(R.id.notification_button_cancel, createPendingIntentForNotificationButton(EVENTCODE_STOP));
+
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContent(remoteViews);
+        builder.setContentIntent(createPendingIntent());
+        builder.setSmallIcon(R.drawable.notification);
+
+        notification = builder.build();
+        return notification;
+    }
+
+
+    private void startForegroundHelper(String songTitle, boolean isLive, boolean enablePrev, boolean enableNext)
     {
-        Notification notification = createNotification(songtitle);
+        Notification notification;
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            notification = createModernNotification(songTitle, isLive, enablePrev, enableNext);
+        }
+        else {
+            notification = createNotification(songTitle);
+        }
         startForeground(1, notification);
     }
-
-    void stopForegroundHelper()
-    {
-        stopForeground(true);
-    }
-    
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
@@ -169,7 +232,8 @@ public class MediaPlayerService extends Service
             _fetcher = ScheduleFetcher.getInstance();
         }
 
-        startForegroundHelper(intent.getStringExtra(INTENT_EXTRA_SONGTITLE));
+
+        startForegroundHelper(intent.getStringExtra(INTENT_EXTRA_SONGTITLE), intent.getBooleanExtra(INTENT_EXTRA_ISLIVE, false), intent.getBooleanExtra(INTENT_EXTRA_ENABLE_PREV, false), intent.getBooleanExtra(INTENT_EXTRA_ENABLE_NEXT, false));
 
         // I think NOT_STICKY is the right flag to return here - basically means
         // "if the process is killed due to low system resource,don't bother starting it back up again"

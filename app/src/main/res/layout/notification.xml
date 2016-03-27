@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="64dp" android:orientation="horizontal" android:gravity="center_vertical" android:background="#FFF0F0F0">
+
+    <ImageView android:src="@drawable/notification_large" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12dp" android:layout_marginRight="12dp"  />
+    <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+        <!-- <TextView android:text="WREK Online" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15dp" android:textColor="#FF000000" /> -->
+        <TextView android:text="Song Title Song Title Song Title Song Title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15dp" android:id="@+id/notification_songtitle" android:textColor="#FF000000" android:maxLines="2" />
+    </LinearLayout>
+
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/prev_button_notification" android:id="@+id/notification_button_prev" android:layout_marginRight="10dp" />
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/next_button_notification" android:id="@+id/notification_button_next" android:layout_marginRight="10dp" />
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/cancel_button_notification" android:id="@+id/notification_button_cancel" android:layout_marginRight="10dp" />
+
+</LinearLayout>
