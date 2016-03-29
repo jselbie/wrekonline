@@ -760,8 +760,7 @@ public class MediaPlayerPresenter implements IMetadataCallback
         {
             String title = _title;
             String songtitle = getSongTitle();
-            songtitle = songtitle.replaceFirst(" - ", "\n"); // convert into two lines
-            
+
             if (songtitle.isEmpty() == false)
             {
                 title = songtitle;

@@ -126,11 +126,11 @@ public class MediaPlayerService extends Service
 
     PendingIntent createPendingIntent() {
         PendingIntent pendingIntent;
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         return pendingIntent;
-
     }
 
     @SuppressWarnings("deprecation")
@@ -167,8 +167,11 @@ public class MediaPlayerService extends Service
         return notification;
     }
 
-    @TargetApi(21)
+    @SuppressWarnings("deprecation")
     Notification createModernNotification(String songTitle, boolean isLive, boolean enablePrev, boolean enableNext) {
+
+        // convert songTitle into two lines (artist and song)
+        songTitle = songTitle.replaceFirst(" - ", "\n"); // convert into two lines
 
         Notification notification;
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification);
@@ -183,8 +186,10 @@ public class MediaPlayerService extends Service
         remoteViews.setViewVisibility(R.id.notification_button_prev, isLive ? View.GONE : View.VISIBLE);
         remoteViews.setViewVisibility(R.id.notification_button_next, isLive ? View.GONE : View.VISIBLE);
 
-        PendingIntent buttonIntentPrev = enablePrev ? createPendingIntentForNotificationButton(EVENTCODE_PREV) : null;
-        PendingIntent buttonIntentNext = enableNext ? createPendingIntentForNotificationButton(EVENTCODE_NEXT) : null;
+        // Set an intent on the buttons even if we don't need it.  Because API 14/15 crash hard on a null pendingIntent
+        // http://stackoverflow.com/a/19240425/104458
+        PendingIntent buttonIntentPrev = createPendingIntentForNotificationButton(EVENTCODE_PREV);
+        PendingIntent buttonIntentNext = createPendingIntentForNotificationButton(EVENTCODE_NEXT);
         remoteViews.setOnClickPendingIntent(R.id.notification_button_prev, buttonIntentPrev);
         remoteViews.setOnClickPendingIntent(R.id.notification_button_next, buttonIntentNext);
 
@@ -195,7 +200,14 @@ public class MediaPlayerService extends Service
         builder.setContentIntent(createPendingIntent());
         builder.setSmallIcon(R.drawable.notification);
 
-        notification = builder.build();
+        if (Build.VERSION.SDK_INT >= 16) {
+            notification = builder.build();
+        }
+        else {
+            // for Android 14/15
+            notification = builder.getNotification();
+        }
+
         return notification;
     }
 
@@ -204,12 +216,23 @@ public class MediaPlayerService extends Service
     {
         Notification notification;
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            notification = createModernNotification(songTitle, isLive, enablePrev, enableNext);
-        }
-        else {
+        if (Build.VERSION.SDK_INT < 21) {
+            // The modern notification crashes on API 15 when startForeground is called
+            // Even though we have fixed it above, it's not worth the risk to ship
+            // See http://stackoverflow.com/a/19240425/104458 for more details
+
+            // Then plan was always to create the modern notification to have an expanded view
+            // on Lollipop/Marshmallow.  So even though we could allow the modern notification
+            // on (SDK_INT >= 16), we'll limit it to just to the newer platforms (>= 21)
+
             notification = createNotification(songTitle);
         }
+        else {
+            notification = createModernNotification(songTitle, isLive, enablePrev, enableNext);
+        }
+
+        Log.d(TAG, "notification: " + notification.toString());
+
         startForeground(1, notification);
     }
 
