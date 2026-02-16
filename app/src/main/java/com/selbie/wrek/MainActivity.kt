@@ -5,23 +5,33 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import com.selbie.wrek.data.repository.SettingsRepository
+import com.selbie.wrek.data.repository.ShowRepository
 import com.selbie.wrek.ui.components.AppDrawer
+import com.selbie.wrek.ui.components.ShowListItem
 import com.selbie.wrek.ui.screens.AboutScreen
 import com.selbie.wrek.ui.screens.SettingsScreen
 import com.selbie.wrek.ui.theme.WrekTheme
+import com.selbie.wrek.viewmodels.MainViewModel
 import com.selbie.wrek.viewmodels.SettingsViewModel
 import kotlinx.coroutines.launch
 
@@ -35,10 +45,14 @@ class MainActivity : ComponentActivity() {
 
         // Initialize repositories
         val settingsRepository = SettingsRepository(applicationContext)
+        val showRepository = ShowRepository()
 
         setContent {
             WrekTheme {
-                WrekApp(settingsRepository = settingsRepository)
+                WrekApp(
+                    settingsRepository = settingsRepository,
+                    showRepository = showRepository
+                )
             }
         }
     }
@@ -46,7 +60,10 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WrekApp(settingsRepository: SettingsRepository) {
+fun WrekApp(
+    settingsRepository: SettingsRepository,
+    showRepository: ShowRepository
+) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -69,10 +86,16 @@ fun WrekApp(settingsRepository: SettingsRepository) {
     ) {
         NavHost(
             navController = navController,
-            startDestination = "main"
+            startDestination = "main",
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
         ) {
             composable("main") {
+                val mainViewModel: MainViewModel = viewModel(
+                    factory = MainViewModel.Factory(showRepository, settingsRepository)
+                )
                 MainScreen(
+                    viewModel = mainViewModel,
                     onOpenDrawer = { scope.launch { drawerState.open() } }
                 )
             }
@@ -99,8 +122,11 @@ fun WrekApp(settingsRepository: SettingsRepository) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    viewModel: MainViewModel,
     onOpenDrawer: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -116,16 +142,34 @@ fun MainScreen(
             )
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Show list will appear here in Phase 2",
-                style = MaterialTheme.typography.bodyLarge
-            )
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(
+                    items = uiState.shows,
+                    key = { show -> show.id }
+                ) { show ->
+                    ShowListItem(
+                        show = show,
+                        isSelected = show.id == uiState.selectedShowId,
+                        onClick = { viewModel.selectShow(show.id) }
+                    )
+                }
+            }
         }
     }
 }

@@ -30,9 +30,13 @@
     <string name="media_footer_error">Error</string>
     <string name="media_footer_now_playing">Now Playing: %s</string>
 
+    <!-- Main Screen -->
+    <string name="main_loading">Loading shows…</string>
+
     <!-- Content Descriptions -->
     <string name="cd_play_button">Play</string>
     <string name="cd_pause_button">Pause</string>
     <string name="cd_stop_button">Stop</string>
     <string name="cd_app_icon">WREK Logo</string>
+    <string name="cd_show_logo">Show logo</string>
 </resources>
