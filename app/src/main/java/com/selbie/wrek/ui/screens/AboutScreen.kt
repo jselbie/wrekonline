@@ -135,7 +135,7 @@ fun AboutScreen(
                             textDecoration = TextDecoration.Underline
                         )
                     ) {
-                        append("www.wrek.org")
+                        append("https://www.wrek.org")
                     }
                     pop() // End URL annotation
                 }
