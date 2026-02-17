@@ -1,5 +1,9 @@
 package com.selbie.wrek.data.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class RadioShow(
     val id: String,                // Generated from title
     val title: String,
@@ -8,7 +12,7 @@ data class RadioShow(
     val streams: List<Stream>,
     val logoUrl: String?,
     val logoBlurHash: String?      // For progressive loading
-)
+) : Parcelable
 
 // Extension function for ID generation
 fun String.toShowId(): String {

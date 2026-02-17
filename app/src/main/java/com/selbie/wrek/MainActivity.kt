@@ -31,7 +31,9 @@ import com.selbie.wrek.ui.components.ShowListItem
 import com.selbie.wrek.ui.screens.AboutScreen
 import com.selbie.wrek.ui.screens.SettingsScreen
 import com.selbie.wrek.ui.theme.WrekTheme
+import com.selbie.wrek.utils.NetworkMonitor
 import com.selbie.wrek.viewmodels.MainViewModel
+import com.selbie.wrek.viewmodels.PlaybackViewModel
 import com.selbie.wrek.viewmodels.SettingsViewModel
 import kotlinx.coroutines.launch
 
@@ -47,11 +49,25 @@ class MainActivity : ComponentActivity() {
         val settingsRepository = SettingsRepository(applicationContext)
         val showRepository = ShowRepository()
 
+        // Initialize network monitor
+        val networkMonitor = NetworkMonitor(applicationContext)
+
         setContent {
             WrekTheme {
+                // Create PlaybackViewModel
+                val playbackViewModel: PlaybackViewModel = viewModel(
+                    factory = PlaybackViewModel.Factory(
+                        application,
+                        showRepository,
+                        settingsRepository,
+                        networkMonitor
+                    )
+                )
+
                 WrekApp(
                     settingsRepository = settingsRepository,
-                    showRepository = showRepository
+                    showRepository = showRepository,
+                    playbackViewModel = playbackViewModel
                 )
             }
         }
@@ -62,7 +78,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WrekApp(
     settingsRepository: SettingsRepository,
-    showRepository: ShowRepository
+    showRepository: ShowRepository,
+    playbackViewModel: PlaybackViewModel
 ) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -96,6 +113,7 @@ fun WrekApp(
                 )
                 MainScreen(
                     viewModel = mainViewModel,
+                    playbackViewModel = playbackViewModel,
                     onOpenDrawer = { scope.launch { drawerState.open() } }
                 )
             }
@@ -123,6 +141,7 @@ fun WrekApp(
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
+    playbackViewModel: PlaybackViewModel,
     onOpenDrawer: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -166,7 +185,10 @@ fun MainScreen(
                     ShowListItem(
                         show = show,
                         isSelected = show.id == uiState.selectedShowId,
-                        onClick = { viewModel.selectShow(show.id) }
+                        onClick = {
+                            viewModel.selectShow(show.id)       // Update UI selection
+                            playbackViewModel.play(show.id)      // Start playback
+                        }
                     )
                 }
             }
