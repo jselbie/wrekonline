@@ -5,18 +5,19 @@ import com.selbie.wrek.data.models.Stream
 
 object StreamSelector {
     /**
-     * "Price is Right" algorithm: pick highest bitrate that doesn't exceed preference
+     * Given a list of streams and a preferredBitrate, pick the stream with the
+     * highest bitrate that does not exceed preferredBitrate. If no stream qualifies, return
+     * the stream with the smallest bitrate.
      */
     fun selectStream(streams: List<Stream>, preferredBitrate: Int): Stream? {
-        if (streams.isEmpty()) return null
-
-        val eligibleStreams = streams.filter { it.bitrate <= preferredBitrate }
-
-        return if (eligibleStreams.isNotEmpty()) {
-            eligibleStreams.maxByOrNull { it.bitrate }
-        } else {
-            streams.minByOrNull { it.bitrate }
+        if (streams.size < 1) {
+            return null
         }
+        val streamsSorted = streams.sortedBy { it.bitrate }
+        val streamsEligible = streams.filter { it.bitrate <= preferredBitrate }
+        val streamsInelligible = streams.filter { it.bitrate > preferredBitrate }
+        val bestStream = streamsEligible.lastOrNull() ?: streamsInelligible.firstOrNull()
+        return bestStream
     }
 
     /**
