@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
@@ -25,9 +26,12 @@ import com.selbie.wrek.data.repository.ShowRepository
 import com.selbie.wrek.service.MediaPlaybackService
 import com.selbie.wrek.utils.NetworkMonitor
 import com.selbie.wrek.utils.StreamSelector
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
@@ -56,6 +60,27 @@ class PlaybackViewModel(
     private var currentStreamUrls: List<String> = emptyList()
     private var isLiveStream: Boolean = false
 
+    // Dynamic song title from ICY metadata (live streams)
+    private var currentSongTitle: String? = null
+
+    // Position polling for smooth seekbar updates
+    private var positionUpdateJob: Job? = null
+
+    private fun startPositionUpdates() {
+        positionUpdateJob?.cancel()
+        positionUpdateJob = viewModelScope.launch {
+            while (isActive) {
+                delay(250)
+                updatePlaybackStateFromPlayer()
+            }
+        }
+    }
+
+    private fun stopPositionUpdates() {
+        positionUpdateJob?.cancel()
+        positionUpdateJob = null
+    }
+
     init {
         // Bind to MediaPlaybackService
         bindToService()
@@ -71,6 +96,13 @@ class PlaybackViewModel(
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            updatePlaybackStateFromPlayer()
+        }
+
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+            val title = mediaMetadata.title?.toString()
+            Log.d(tag, "Media metadata changed: title=$title")
+            currentSongTitle = title
             updatePlaybackStateFromPlayer()
         }
 
@@ -145,8 +177,10 @@ class PlaybackViewModel(
                         currentMediaItemIndex = currentIndex,
                         position = position,
                         duration = duration,
-                        isLiveStream = isLiveStream
+                        isLiveStream = isLiveStream,
+                        songTitle = currentSongTitle
                     )
+                    startPositionUpdates()
                 } else {
                     _playbackState.value = PlaybackState.Paused(
                         show = show,
@@ -154,8 +188,10 @@ class PlaybackViewModel(
                         currentMediaItemIndex = currentIndex,
                         position = position,
                         duration = duration,
-                        isLiveStream = isLiveStream
+                        isLiveStream = isLiveStream,
+                        songTitle = currentSongTitle
                     )
+                    stopPositionUpdates()
                 }
             }
 
@@ -163,6 +199,7 @@ class PlaybackViewModel(
                 _playbackState.value = PlaybackState.Stopped(show)
                 currentShow = null
                 currentStreamUrls = emptyList()
+                stopPositionUpdates()
             }
         }
     }
@@ -191,6 +228,7 @@ class PlaybackViewModel(
             errorMessage = errorMessage
         )
 
+        stopPositionUpdates()
         currentShow = null
         currentStreamUrls = emptyList()
     }
@@ -238,6 +276,7 @@ class PlaybackViewModel(
             currentShow = show
             currentStreamUrls = stream.playlist
             isLiveStream = stream.isLiveStream
+            currentSongTitle = null
 
             // Send custom command to service
             val controller = mediaController
@@ -301,6 +340,7 @@ class PlaybackViewModel(
      * Stops playback completely.
      */
     fun stop() {
+        stopPositionUpdates()
         viewModelScope.launch {
             Log.d(tag, "stop")
             mediaController?.stop()
@@ -322,6 +362,7 @@ class PlaybackViewModel(
         super.onCleared()
         Log.d(tag, "onCleared")
 
+        stopPositionUpdates()
         // Remove listener and release MediaController
         mediaController?.removeListener(playerListener)
         mediaController?.release()

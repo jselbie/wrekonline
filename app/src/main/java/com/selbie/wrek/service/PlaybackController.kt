@@ -7,9 +7,11 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.extractor.metadata.icy.IcyInfo
 import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
@@ -49,6 +51,11 @@ class PlaybackController(
             Log.d(tag, "isPlaying: $isPlaying")
         }
 
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+            super.onMediaMetadataChanged(mediaMetadata)
+            Log.d(tag, "Metadata change: ${mediaMetadata?.title}")
+        }
+
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             Log.d(tag, "Media item transition: ${mediaItem?.mediaMetadata?.title}")
         }
@@ -86,12 +93,14 @@ class PlaybackController(
         // Add all URLs from the stream's playlist with metadata
         stream.playlist.forEachIndexed { index, url ->
             val metadata = MediaMetadata.Builder()
-                .setTitle(show.title)
                 .setArtist("WREK Atlanta")
-                .setAlbumTitle("WREK 91.1FM")
-                .setDisplayTitle(show.title)
-                .setSubtitle(if (stream.isLiveStream) "Live Stream" else show.description)
                 .apply {
+                    // Set title only for pre-recorded content.
+                    // For live streams, leave title unset so ICY metadata can populate it.
+                    if (!stream.isLiveStream) {
+                        setTitle(show.title)
+                        setDisplayTitle(show.title)
+                    }
                     // Add artwork if available
                     show.logoUrl?.let { logoUrl ->
                         setArtworkUri(Uri.parse(logoUrl))

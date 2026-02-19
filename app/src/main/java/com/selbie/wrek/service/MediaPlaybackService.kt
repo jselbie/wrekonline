@@ -45,8 +45,18 @@ class MediaPlaybackService : MediaSessionService() {
         // Initialize PlaybackController (no callback needed - Media3 handles notifications)
         playbackController = PlaybackController(this)
 
+        // Create a PendingIntent to launch MainActivity when notification is tapped
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         // Create MediaSession - Media3 will automatically show notification when playing
         mediaSession = MediaSession.Builder(this, playbackController.player)
+            .setSessionActivity(pendingIntent)
             .setCallback(sessionCallback)
             .build()
 

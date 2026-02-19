@@ -38,6 +38,62 @@ class ShowRepository {
                 logoBlurHash = "LEHV6nWB2yk8pyo0adR*.7kCMdnj"
             ),
             RadioShow(
+                id = "classics_mon",
+                title = "Classics",
+                description = "Classical music of all forms",
+                creationTime = "2026-02-16T06:00:00",
+                streams = listOf(
+                    Stream(
+                        128,
+                        listOf(
+                            "https://archive.wrek.org/main/128kb/Mon0600.mp3",
+                            "https://archive.wrek.org/main/128kb/Mon0630.mp3",
+                            "https://archive.wrek.org/main/128kb/Mon0700.mp3",
+                            "https://archive.wrek.org/main/128kb/Mon0730.mp3"
+                        ),
+                        false
+                    ),
+                    Stream(
+                        320,
+                        listOf(
+                            "https://archive.wrek.org/main/320kb/Mon0600.mp3",
+                            "https://archive.wrek.org/main/320kb/Mon0630.mp3",
+                            "https://archive.wrek.org/main/320kb/Mon0700.mp3",
+                            "https://archive.wrek.org/main/320kb/Mon0730.mp3"
+                        ),
+                        false
+                    )
+                ),
+                logoUrl = "https://www.selbie.com/wrek/classics2.png",
+                logoBlurHash = null
+            ),
+            RadioShow(
+                id = "all_the_fixins_mon",
+                title = "All The Fixins",
+                description = "Coming Soon",
+                creationTime = "2026-02-16T19:00:00",
+                streams = listOf(
+                    Stream(
+                        128,
+                        listOf(
+                            "https://archive.wrek.org/main/128kb/Mon1900.mp3",
+                            "https://archive.wrek.org/main/128kb/Mon1930.mp3"
+                        ),
+                        false
+                    ),
+                    Stream(
+                        320,
+                        listOf(
+                            "https://archive.wrek.org/main/320kb/Mon1900.mp3",
+                            "https://archive.wrek.org/main/320kb/Mon1930.mp3"
+                        ),
+                        false
+                    )
+                ),
+                logoUrl = "https://www.selbie.com/wrek/all_the_fixins.png",
+                logoBlurHash = null
+            ),
+            RadioShow(
                 id = "Random Stuff".toShowId(),
                 title = "Random Stuff",
                 description = "Some random songs",

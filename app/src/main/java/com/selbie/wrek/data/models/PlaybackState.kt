@@ -32,7 +32,8 @@ sealed class PlaybackState {
         val currentMediaItemIndex: Int,
         val position: Long,
         val duration: Long?,
-        val isLiveStream: Boolean
+        val isLiveStream: Boolean,
+        val songTitle: String? = null
     ) : PlaybackState()
 
     /**
@@ -50,7 +51,8 @@ sealed class PlaybackState {
         val currentMediaItemIndex: Int,
         val position: Long,
         val duration: Long?,
-        val isLiveStream: Boolean
+        val isLiveStream: Boolean,
+        val songTitle: String? = null
     ) : PlaybackState()
 
     /**

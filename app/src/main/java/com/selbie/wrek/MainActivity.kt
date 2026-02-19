@@ -26,7 +26,9 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import com.selbie.wrek.data.repository.SettingsRepository
 import com.selbie.wrek.data.repository.ShowRepository
+import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.ui.components.AppDrawer
+import com.selbie.wrek.ui.components.MediaFooter
 import com.selbie.wrek.ui.components.ShowListItem
 import com.selbie.wrek.ui.screens.AboutScreen
 import com.selbie.wrek.ui.screens.SettingsScreen
@@ -145,6 +147,7 @@ fun MainScreen(
     onOpenDrawer: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val playbackState by playbackViewModel.playbackState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -158,6 +161,26 @@ fun MainScreen(
                         )
                     }
                 }
+            )
+        },
+        bottomBar = {
+            MediaFooter(
+                playbackState = playbackState,
+                onPlayPauseToggle = {
+                    when (playbackState) {
+                        is PlaybackState.Playing -> {
+                            if ((playbackState as PlaybackState.Playing).isLiveStream) {
+                                playbackViewModel.stop()
+                            } else {
+                                playbackViewModel.pause()
+                            }
+                        }
+                        is PlaybackState.Paused -> playbackViewModel.resume()
+                        else -> { /* no-op */ }
+                    }
+                },
+                onStop = { playbackViewModel.stop() },
+                onSeekTo = { positionMs -> playbackViewModel.seekTo(positionMs) }
             )
         }
     ) { paddingValues ->
