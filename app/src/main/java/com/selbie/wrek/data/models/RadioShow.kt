@@ -2,7 +2,9 @@ package com.selbie.wrek.data.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Parcelize
 data class RadioShow(
     val id: String,                // Generated from title

@@ -8,6 +8,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,6 +18,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.utils.rememberBlurHashBitmap
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ShowListItem(
@@ -43,7 +47,7 @@ fun ShowListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             show.logoUrl?.let { url ->
@@ -54,7 +58,7 @@ fun ShowListItem(
                     model = url,
                     contentDescription = "${show.title} logo",
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(width = 96.dp, height = 64.dp)
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop,
                     placeholder = placeholder
@@ -83,7 +87,36 @@ fun ShowListItem(
                         MaterialTheme.colorScheme.onSurfaceVariant
                     }
                 )
+                show.creationTime?.let { timeStr ->
+                    val formatted = remember(timeStr) {
+                        formatCreationTime(timeStr)
+                    }
+                    if (formatted != null) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = formatted,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected) {
+                                MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            }
+                        )
+                    }
+                }
             }
         }
+    }
+}
+
+private val isoParser = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+private val displayFormatter = DateTimeFormatter.ofPattern("M/d h:mma", Locale.US)
+
+private fun formatCreationTime(isoString: String): String? {
+    return try {
+        val dt = LocalDateTime.parse(isoString, isoParser)
+        dt.format(displayFormatter).lowercase(Locale.US)
+    } catch (_: Exception) {
+        null
     }
 }

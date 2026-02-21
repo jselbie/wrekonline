@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.selbie.wrek.data.models.RadioShow
+import com.selbie.wrek.data.repository.ScheduleState
 import com.selbie.wrek.data.repository.SettingsRepository
 import com.selbie.wrek.data.repository.ShowRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 data class MainUiState(
     val shows: List<RadioShow> = emptyList(),
     val selectedShowId: String? = null,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val errorMessage: String? = null
 )
 
 class MainViewModel(
@@ -27,11 +29,26 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            showRepository.shows.collect { shows ->
-                _uiState.value = _uiState.value.copy(
-                    shows = shows,
-                    isLoading = false
-                )
+            showRepository.refresh()
+        }
+        viewModelScope.launch {
+            showRepository.state.collect { state ->
+                _uiState.value = when (state) {
+                    is ScheduleState.Loading -> _uiState.value.copy(
+                        isLoading = true,
+                        errorMessage = null
+                    )
+                    is ScheduleState.Success -> _uiState.value.copy(
+                        shows = state.shows,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                    is ScheduleState.Error -> _uiState.value.copy(
+                        shows = emptyList(),
+                        isLoading = false,
+                        errorMessage = state.message
+                    )
+                }
             }
         }
     }
@@ -42,6 +59,12 @@ class MainViewModel(
 
     fun clearSelection() {
         _uiState.value = _uiState.value.copy(selectedShowId = null)
+    }
+
+    fun retry() {
+        viewModelScope.launch {
+            showRepository.refresh()
+        }
     }
 
     class Factory(

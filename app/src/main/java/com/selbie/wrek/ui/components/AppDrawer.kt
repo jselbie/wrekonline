@@ -8,6 +8,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.selbie.wrek.R
 
@@ -28,6 +30,7 @@ fun AppDrawer(
         Text(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.titleLarge,
+            fontFamily = FontFamily(Font(R.font.metro_df)),
             modifier = Modifier.padding(horizontal = 28.dp, vertical = 16.dp)
         )
 

@@ -1,135 +1,52 @@
 package com.selbie.wrek.data.repository
 
+import android.util.Log
 import com.selbie.wrek.data.models.RadioShow
-import com.selbie.wrek.data.models.Stream
-import com.selbie.wrek.data.models.toShowId
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import java.net.URL
+
+private const val TAG = "ShowRepository"
+private const val SCHEDULE_URL = "https://www.selbie.com/wrek/schedule2.json"
+
+@Serializable
+private data class ScheduleResponse(val schedule: List<RadioShow>)
+
+sealed interface ScheduleState {
+    data object Loading : ScheduleState
+    data class Success(val shows: List<RadioShow>) : ScheduleState
+    data class Error(val message: String) : ScheduleState
+}
 
 class ShowRepository {
-    private val _shows = MutableStateFlow(getHardcodedShows())
+    private val json = Json { ignoreUnknownKeys = true }
+
+    private val _state = MutableStateFlow<ScheduleState>(ScheduleState.Loading)
+    val state: StateFlow<ScheduleState> = _state.asStateFlow()
+
+    // Backward-compatible shows flow for PlaybackViewModel
+    private val _shows = MutableStateFlow<List<RadioShow>>(emptyList())
     val shows: StateFlow<List<RadioShow>> = _shows.asStateFlow()
 
-    private fun getHardcodedShows(): List<RadioShow> {
-        val baseShows = listOf(
-            RadioShow(
-                id = "Live Air Stream".toShowId(),
-                title = "Live Air Stream",
-                description = "WREK's main 91.1 FM broadcast - eclectic college radio",
-                creationTime = null,
-                streams = listOf(
-                    Stream(128, listOf("https://streaming.wrek.org/main/128kb.mp3"), true),
-                    Stream(320, listOf("https://streaming.wrek.org/main/320kb.mp3"), true)
-                ),
-                logoUrl = "https://www.selbie.com/wrek/radio2.png",
-                logoBlurHash = "LKO2?V%2Tw=w]~RBVZRi};RPxuwH"
-            ),
-            RadioShow(
-                id = "HD2 Subchannel".toShowId(),
-                title = "HD2 Subchannel",
-                description = "WREK's HD Radio subchannel - alternative programming",
-                creationTime = null,
-                streams = listOf(
-                    Stream(128, listOf("https://streaming.wrek.org/hd2/128kb.mp3"), true),
-                    Stream(320, listOf("https://streaming.wrek.org/hd2/320kb.mp3"), true)
-                ),
-                logoUrl = "https://www.selbie.com/wrek/hd.png",
-                logoBlurHash = "LEHV6nWB2yk8pyo0adR*.7kCMdnj"
-            ),
-            RadioShow(
-                id = "classics_mon",
-                title = "Classics",
-                description = "Classical music of all forms",
-                creationTime = "2026-02-16T06:00:00",
-                streams = listOf(
-                    Stream(
-                        128,
-                        listOf(
-                            "https://archive.wrek.org/main/128kb/Mon0600.mp3",
-                            "https://archive.wrek.org/main/128kb/Mon0630.mp3",
-                            "https://archive.wrek.org/main/128kb/Mon0700.mp3",
-                            "https://archive.wrek.org/main/128kb/Mon0730.mp3"
-                        ),
-                        false
-                    ),
-                    Stream(
-                        320,
-                        listOf(
-                            "https://archive.wrek.org/main/320kb/Mon0600.mp3",
-                            "https://archive.wrek.org/main/320kb/Mon0630.mp3",
-                            "https://archive.wrek.org/main/320kb/Mon0700.mp3",
-                            "https://archive.wrek.org/main/320kb/Mon0730.mp3"
-                        ),
-                        false
-                    )
-                ),
-                logoUrl = "https://www.selbie.com/wrek/classics2.png",
-                logoBlurHash = null
-            ),
-            RadioShow(
-                id = "all_the_fixins_mon",
-                title = "All The Fixins",
-                description = "Coming Soon",
-                creationTime = "2026-02-16T19:00:00",
-                streams = listOf(
-                    Stream(
-                        128,
-                        listOf(
-                            "https://archive.wrek.org/main/128kb/Mon1900.mp3",
-                            "https://archive.wrek.org/main/128kb/Mon1930.mp3"
-                        ),
-                        false
-                    ),
-                    Stream(
-                        320,
-                        listOf(
-                            "https://archive.wrek.org/main/320kb/Mon1900.mp3",
-                            "https://archive.wrek.org/main/320kb/Mon1930.mp3"
-                        ),
-                        false
-                    )
-                ),
-                logoUrl = "https://www.selbie.com/wrek/all_the_fixins.png",
-                logoBlurHash = null
-            ),
-            RadioShow(
-                id = "Random Stuff".toShowId(),
-                title = "Random Stuff",
-                description = "Some random songs",
-                creationTime = "2026-02-10T20:00:00Z",
-                streams = listOf(
-                    Stream(
-                        128,
-                        listOf(
-                            "https://www.selbie.com/shows/Maria.mp3",
-                            "https://www.selbie.com/shows/NightPeople.mp3"
-                        ),
-                        false
-                    ),
-                    Stream(
-                        320,
-                        listOf(
-                            "https://www.selbie.com/shows/Maria.mp3",
-                            "https://www.selbie.com/shows/NightPeople.mp3"
-                        ),
-                        false
-                    )
-                ),
-                logoUrl = "https://www.selbie.com/shows/DioDreamEvil.jpg",
-                logoBlurHash = "L9Aw]~?w00?v~q-;_3-;00Rj%MRj"
-            )
-        )
-
-        // Generate 20 shows by repeating the base 3 shows
-        return buildList {
-            repeat(20) { index ->
-                val baseShow = baseShows[index % baseShows.size]
-                add(baseShow.copy(
-                    id = "${baseShow.id}-${index + 1}",
-                    title = "${baseShow.title} ${index + 1}"
-                ))
+    suspend fun refresh() {
+        _state.value = ScheduleState.Loading
+        try {
+            val text = withContext(Dispatchers.IO) {
+                URL(SCHEDULE_URL).readText()
             }
+            val response = json.decodeFromString<ScheduleResponse>(text)
+            Log.d(TAG, "Fetched ${response.schedule.size} shows")
+            _shows.value = response.schedule
+            _state.value = ScheduleState.Success(response.schedule)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to fetch schedule", e)
+            _shows.value = emptyList()
+            _state.value = ScheduleState.Error("Unable to load schedule. Check your connection.")
         }
     }
 }
