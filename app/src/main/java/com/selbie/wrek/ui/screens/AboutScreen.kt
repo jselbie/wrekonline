@@ -38,7 +38,7 @@ fun AboutScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back"
+                            contentDescription = stringResource(R.string.cd_navigate_back)
                         )
                     }
                 }
@@ -86,7 +86,7 @@ fun AboutScreen(
                 // Clickable email for feedback
                 val context = LocalContext.current
                 val feedbackText = buildAnnotatedString {
-                    append("Feedback: ")
+                    append(context.getString(R.string.about_feedback_label))
 
                     pushStringAnnotation(
                         tag = "EMAIL",
@@ -122,7 +122,7 @@ fun AboutScreen(
 
                 // Clickable URL for www.wrek.org
                 val wrekWebText = buildAnnotatedString {
-                    append("Follow WREK on the web: ")
+                    append(context.getString(R.string.about_wrek_web_label))
 
                     // Start clickable URL portion
                     pushStringAnnotation(
@@ -160,7 +160,7 @@ fun AboutScreen(
 
                 // Clickable email for WREK contact
                 val wrekContactText = buildAnnotatedString {
-                    append("Contact WREK: ")
+                    append(context.getString(R.string.about_wrek_contact_label))
 
                     pushStringAnnotation(
                         tag = "EMAIL",

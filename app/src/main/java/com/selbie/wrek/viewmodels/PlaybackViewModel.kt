@@ -19,6 +19,7 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import com.selbie.wrek.R
 import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.repository.SettingsRepository
@@ -46,6 +47,7 @@ class PlaybackViewModel(
 ) : AndroidViewModel(application) {
 
     private val tag = "PlaybackViewModel"
+    private fun str(resId: Int) = getApplication<Application>().getString(resId)
 
     // Playback state exposed to UI
     private val _playbackState = MutableStateFlow<PlaybackState>(PlaybackState.Idle)
@@ -134,8 +136,58 @@ class PlaybackViewModel(
                     // Start the service to ensure it's running
                     val intent = Intent(getApplication(), MediaPlaybackService::class.java)
                     getApplication<Application>().startService(intent)
+
+                    // Recover current show/stream from the service if it's already playing
+                    recoverCurrentState()
                 } catch (e: Exception) {
                     Log.e(tag, "Failed to connect MediaController", e)
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
+    }
+
+    /**
+     * Queries the service for the currently playing show/stream.
+     * Restores local state so updatePlaybackStateFromPlayer() works after Activity recreation.
+     */
+    private fun recoverCurrentState() {
+        val controller = mediaController ?: return
+
+        val command = SessionCommand(MediaPlaybackService.COMMAND_GET_CURRENT_STATE, Bundle.EMPTY)
+        val resultFuture = controller.sendCustomCommand(command, Bundle.EMPTY)
+
+        resultFuture.addListener(
+            {
+                try {
+                    val result = resultFuture.get()
+                    if (result.resultCode == androidx.media3.session.SessionResult.RESULT_SUCCESS) {
+                        val extras = result.extras
+                        val show = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                            extras.getParcelable(MediaPlaybackService.EXTRA_SHOW, RadioShow::class.java)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            extras.getParcelable<RadioShow>(MediaPlaybackService.EXTRA_SHOW)
+                        }
+                        val stream = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                            extras.getParcelable(MediaPlaybackService.EXTRA_STREAM, com.selbie.wrek.data.models.Stream::class.java)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            extras.getParcelable<com.selbie.wrek.data.models.Stream>(MediaPlaybackService.EXTRA_STREAM)
+                        }
+
+                        if (show != null && stream != null) {
+                            Log.d(tag, "Recovered current state: ${show.title}")
+                            currentShow = show
+                            currentStreamUrls = stream.playlist
+                            isLiveStream = stream.isLiveStream
+                            updatePlaybackStateFromPlayer()
+                        }
+                    } else {
+                        Log.d(tag, "No active show to recover")
+                    }
+                } catch (e: Exception) {
+                    Log.e(tag, "Failed to recover current state", e)
                 }
             },
             MoreExecutors.directExecutor()
@@ -210,15 +262,15 @@ class PlaybackViewModel(
     private fun handlePlayerError(error: PlaybackException) {
         val errorMessage = when (error.errorCode) {
             PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
-            PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> "Network connection failed"
+            PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> str(R.string.error_network_connection)
 
             PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
-            PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND -> "Stream unavailable"
+            PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND -> str(R.string.error_stream_unavailable)
 
             PlaybackException.ERROR_CODE_DECODER_INIT_FAILED,
-            PlaybackException.ERROR_CODE_DECODING_FAILED -> "Playback error"
+            PlaybackException.ERROR_CODE_DECODING_FAILED -> str(R.string.error_playback)
 
-            else -> error.message ?: "Unknown error"
+            else -> error.message ?: str(R.string.error_unknown)
         }
 
         Log.e(tag, "Player error: $errorMessage (code=${error.errorCode})")
@@ -247,7 +299,7 @@ class PlaybackViewModel(
             val show = showRepository.shows.value.find { it.id == showId }
             if (show == null) {
                 Log.e(tag, "Show not found: $showId")
-                _playbackState.value = PlaybackState.Error(null, "Show not found")
+                _playbackState.value = PlaybackState.Error(null, str(R.string.error_show_not_found))
                 return@launch
             }
 
@@ -266,7 +318,7 @@ class PlaybackViewModel(
             val stream = StreamSelector.selectStream(show.streams, preferredBitrate)
             if (stream == null) {
                 Log.e(tag, "No suitable stream found for bitrate: $preferredBitrate")
-                _playbackState.value = PlaybackState.Error(show, "No stream available")
+                _playbackState.value = PlaybackState.Error(show, str(R.string.error_no_stream))
                 return@launch
             }
 
@@ -282,7 +334,7 @@ class PlaybackViewModel(
             val controller = mediaController
             if (controller == null) {
                 Log.e(tag, "MediaController not connected")
-                _playbackState.value = PlaybackState.Error(show, "Service not available")
+                _playbackState.value = PlaybackState.Error(show, str(R.string.error_service_unavailable))
                 return@launch
             }
 
@@ -304,11 +356,11 @@ class PlaybackViewModel(
                         val result = resultFuture.get()
                         if (result.resultCode != androidx.media3.session.SessionResult.RESULT_SUCCESS) {
                             Log.e(tag, "Load and play command failed")
-                            _playbackState.value = PlaybackState.Error(show, "Failed to start playback")
+                            _playbackState.value = PlaybackState.Error(show, str(R.string.error_start_playback))
                         }
                     } catch (e: Exception) {
                         Log.e(tag, "Error sending load and play command", e)
-                        _playbackState.value = PlaybackState.Error(show, "Failed to start playback")
+                        _playbackState.value = PlaybackState.Error(show, str(R.string.error_start_playback))
                     }
                 },
                 MoreExecutors.directExecutor()

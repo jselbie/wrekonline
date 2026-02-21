@@ -34,6 +34,7 @@ class MediaPlaybackService : MediaSessionService() {
     companion object {
         // Custom session commands
         const val COMMAND_LOAD_AND_PLAY = "com.selbie.wrek.LOAD_AND_PLAY"
+        const val COMMAND_GET_CURRENT_STATE = "com.selbie.wrek.GET_CURRENT_STATE"
         const val EXTRA_SHOW = "extra_show"
         const val EXTRA_STREAM = "extra_stream"
     }
@@ -88,6 +89,7 @@ class MediaPlaybackService : MediaSessionService() {
             val connectionResult = super.onConnect(session, controller)
             val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
                 .add(SessionCommand(COMMAND_LOAD_AND_PLAY, Bundle.EMPTY))
+                .add(SessionCommand(COMMAND_GET_CURRENT_STATE, Bundle.EMPTY))
                 .build()
             return MediaSession.ConnectionResult.accept(
                 availableSessionCommands,
@@ -123,6 +125,22 @@ class MediaPlaybackService : MediaSessionService() {
                     } else {
                         Log.e(tag, "LOAD_AND_PLAY missing show or stream")
                         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_ERROR_BAD_VALUE))
+                    }
+                }
+
+                COMMAND_GET_CURRENT_STATE -> {
+                    val show = playbackController.currentShow
+                    val stream = playbackController.currentStream
+                    if (show != null && stream != null) {
+                        Log.d(tag, "GET_CURRENT_STATE: ${show.title}")
+                        val resultBundle = Bundle().apply {
+                            putParcelable(EXTRA_SHOW, show)
+                            putParcelable(EXTRA_STREAM, stream)
+                        }
+                        return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS, resultBundle))
+                    } else {
+                        Log.d(tag, "GET_CURRENT_STATE: no active show")
+                        return Futures.immediateFuture(SessionResult(SessionResult.RESULT_ERROR_UNKNOWN))
                     }
                 }
             }

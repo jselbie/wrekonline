@@ -12,6 +12,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.extractor.metadata.icy.IcyInfo
+import com.selbie.wrek.R
 import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
@@ -25,9 +26,11 @@ class PlaybackController(
 ) {
     private val tag = "PlaybackController"
 
-    // Current show and stream being played (for internal tracking only)
-    private var currentShow: RadioShow? = null
-    private var currentStream: Stream? = null
+    // Current show and stream being played
+    var currentShow: RadioShow? = null
+        private set
+    var currentStream: Stream? = null
+        private set
 
     // ExoPlayer instance with audio focus handling
     private val audioAttributes = AudioAttributes.Builder()
@@ -93,7 +96,7 @@ class PlaybackController(
         // Add all URLs from the stream's playlist with metadata
         stream.playlist.forEachIndexed { index, url ->
             val metadata = MediaMetadata.Builder()
-                .setArtist("WREK Atlanta")
+                .setArtist(context.getString(R.string.playback_artist))
                 .apply {
                     // Set title only for pre-recorded content.
                     // For live streams, leave title unset so ICY metadata can populate it.

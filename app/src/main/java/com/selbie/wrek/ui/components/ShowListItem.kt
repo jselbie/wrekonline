@@ -1,21 +1,30 @@
 package com.selbie.wrek.ui.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.selbie.wrek.R
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.utils.rememberBlurHashBitmap
 import java.time.LocalDateTime
@@ -29,6 +38,29 @@ fun ShowListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDark = isSystemInDarkTheme()
+    val baseAlpha = if (isDark) 0.65f else 0.75f
+    val scrimAlpha = remember { Animatable(baseAlpha) }
+
+    var skipNextAnimation by remember { mutableStateOf(isSelected) }
+
+    LaunchedEffect(isSelected) {
+        if (isSelected) {
+            if (skipNextAnimation) {
+                skipNextAnimation = false
+                scrimAlpha.snapTo(baseAlpha)
+            } else {
+                scrimAlpha.snapTo((baseAlpha - 0.30f).coerceAtLeast(0f))
+                scrimAlpha.animateTo(baseAlpha, animationSpec = tween(3000))
+            }
+        } else {
+            scrimAlpha.snapTo(baseAlpha)
+        }
+    }
+
+    val scrimColor = if (isDark) Color.Black.copy(alpha = scrimAlpha.value) else Color.White.copy(alpha = scrimAlpha.value)
+    val textColor = if (isDark) Color.White else Color.Black
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -37,55 +69,57 @@ fun ShowListItem(
             defaultElevation = if (isSelected) 8.dp else 2.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
-            }
-        )
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = if (isSelected) {
+            BorderStroke(2.dp, textColor)
+        } else {
+            null
+        }
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .height(120.dp)
         ) {
+            // Background image layer
             show.logoUrl?.let { url ->
                 val blurHashBitmap = rememberBlurHashBitmap(show.logoBlurHash, width = 32, height = 32)
                 val placeholder = blurHashBitmap?.let { BitmapPainter(it) }
 
                 AsyncImage(
                     model = url,
-                    contentDescription = "${show.title} logo",
-                    modifier = Modifier
-                        .size(width = 96.dp, height = 64.dp)
-                        .clip(RoundedCornerShape(8.dp)),
+                    contentDescription = stringResource(R.string.cd_show_logo, show.title),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     placeholder = placeholder
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            // Dark scrim overlay
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(scrimColor)
+            )
 
-            Column(modifier = Modifier.weight(1f)) {
+            // Text content
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = show.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    }
+                    style = MaterialTheme.typography.titleLarge,
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = show.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
+                    color = textColor
                 )
                 show.creationTime?.let { timeStr ->
                     val formatted = remember(timeStr) {
@@ -96,11 +130,7 @@ fun ShowListItem(
                         Text(
                             text = formatted,
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (isSelected) {
-                                MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                            }
+                            color = textColor
                         )
                     }
                 }

@@ -153,15 +153,21 @@ fun MediaFooter(
                     )
                 }
 
-                // Timestamps row (pre-recorded only)
-                if (seekbarEnabled) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
+                // Timestamps row (always present to keep footer height stable)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    if (seekbarEnabled) {
                         val displayPosition = if (isDragging) dragPosition.toLong() else position
                         Text(
                             text = "${formatTime(displayPosition)} / ${formatTime(duration ?: 0L)}",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    } else {
+                        // Invisible placeholder to reserve the same vertical space
+                        Text(
+                            text = "",
                             style = MaterialTheme.typography.labelSmall
                         )
                     }

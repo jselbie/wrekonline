@@ -1,6 +1,8 @@
 package com.selbie.wrek.data.repository
 
+import android.content.Context
 import android.util.Log
+import com.selbie.wrek.R
 import com.selbie.wrek.data.models.RadioShow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,7 @@ sealed interface ScheduleState {
     data class Error(val message: String) : ScheduleState
 }
 
-class ShowRepository {
+class ShowRepository(private val context: Context) {
     private val json = Json { ignoreUnknownKeys = true }
 
     private val _state = MutableStateFlow<ScheduleState>(ScheduleState.Loading)
@@ -46,7 +48,7 @@ class ShowRepository {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to fetch schedule", e)
             _shows.value = emptyList()
-            _state.value = ScheduleState.Error("Unable to load schedule. Check your connection.")
+            _state.value = ScheduleState.Error(context.getString(R.string.error_load_schedule))
         }
     }
 }

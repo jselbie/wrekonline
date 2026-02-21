@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
 
         // Initialize repositories
         val settingsRepository = SettingsRepository(applicationContext)
-        val showRepository = ShowRepository()
+        val showRepository = ShowRepository(applicationContext)
 
         // Initialize network monitor
         val networkMonitor = NetworkMonitor(applicationContext)
@@ -153,6 +153,15 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsState()
     val playbackState by playbackViewModel.playbackState.collectAsState()
 
+    // Derive effective selected show: explicit UI selection takes priority,
+    // otherwise fall back to the show currently being played by the service
+    val effectiveSelectedShowId = uiState.selectedShowId ?: when (playbackState) {
+        is PlaybackState.Loading -> (playbackState as PlaybackState.Loading).show.id
+        is PlaybackState.Playing -> (playbackState as PlaybackState.Playing).show.id
+        is PlaybackState.Paused -> (playbackState as PlaybackState.Paused).show.id
+        else -> null
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -228,7 +237,7 @@ fun MainScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { viewModel.retry() }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.button_retry))
                         }
                     }
                 }
@@ -247,7 +256,7 @@ fun MainScreen(
                     ) { show ->
                         ShowListItem(
                             show = show,
-                            isSelected = show.id == uiState.selectedShowId,
+                            isSelected = show.id == effectiveSelectedShowId,
                             onClick = {
                                 viewModel.selectShow(show.id)       // Update UI selection
                                 playbackViewModel.play(show.id)      // Start playback
