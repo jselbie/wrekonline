@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -85,6 +86,9 @@ fun ShowListItem(
             // Background image layer
             show.logoUrl?.let { url ->
                 val blurHashBitmap = rememberBlurHashBitmap(show.logoBlurHash, width = 32, height = 32)
+
+                //debugLogBlurHashBitmap(show.title, blurHashBitmap)
+
                 val placeholder = blurHashBitmap?.let { BitmapPainter(it) }
 
                 AsyncImage(
@@ -92,7 +96,9 @@ fun ShowListItem(
                     contentDescription = stringResource(R.string.cd_show_logo, show.title),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
-                    placeholder = placeholder
+                    error = placeholder,
+                    placeholder = placeholder,
+                    fallback = placeholder
                 )
             }
 
@@ -140,13 +146,32 @@ fun ShowListItem(
 }
 
 private val isoParser = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-private val displayFormatter = DateTimeFormatter.ofPattern("M/d h:mma", Locale.US)
+private val displayFormatter = DateTimeFormatter.ofPattern("EEE M/d h:mm a", Locale.US)
 
 private fun formatCreationTime(isoString: String): String? {
     return try {
         val dt = LocalDateTime.parse(isoString, isoParser)
-        dt.format(displayFormatter).lowercase(Locale.US)
+        dt.format(displayFormatter)
     } catch (_: Exception) {
         null
     }
 }
+
+//private fun debugLogBlurHashBitmap(title: String, bitmap: androidx.compose.ui.graphics.ImageBitmap?) {
+//    if (bitmap != null) {
+//        android.util.Log.d("ShowListItem", "$title: blurHash bitmap=${bitmap.width}x${bitmap.height}")
+//        val androidBitmap = bitmap.asAndroidBitmap()
+//        val midY = androidBitmap.height / 2
+//        val allBlack = (0 until androidBitmap.width).all { x ->
+//            val p = androidBitmap.getPixel(x, midY)
+//            android.graphics.Color.red(p) == 0 && android.graphics.Color.green(p) == 0 && android.graphics.Color.blue(p) == 0
+//        }
+//        val allTransparent = (0 until androidBitmap.width).all { x ->
+//            android.graphics.Color.alpha(androidBitmap.getPixel(x, midY)) == 0
+//        }
+//        if (allBlack) android.util.Log.w("ShowListItem", "$title: blurHash bitmap middle row is all black")
+//        if (allTransparent) android.util.Log.w("ShowListItem", "$title: blurHash bitmap middle row is all transparent")
+//    } else {
+//        android.util.Log.d("ShowListItem", "$title: blurHash bitmap is null (no logoBlurHash?)")
+//    }
+//}

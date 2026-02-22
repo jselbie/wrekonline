@@ -1,14 +1,9 @@
 package com.selbie.wrek.service
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.media3.common.Player
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionCommand
@@ -16,8 +11,6 @@ import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.selbie.wrek.MainActivity
-import com.selbie.wrek.R
-import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
 

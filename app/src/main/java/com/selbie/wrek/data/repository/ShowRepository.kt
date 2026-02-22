@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
 import java.net.URL
 
 private const val TAG = "ShowRepository"
-private const val SCHEDULE_URL = "https://www.selbie.com/wrek/schedule2.json"
+private const val SCHEDULE_URL = "https://www.selbie.com/wrek/schedule3.json"
 
 @Serializable
 private data class ScheduleResponse(val schedule: List<RadioShow>)
