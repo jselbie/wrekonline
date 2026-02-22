@@ -26,6 +26,11 @@ class PlaybackController(
 ) {
     private val tag = "PlaybackController"
 
+    companion object {
+        // Duration of each WREK archive segment in milliseconds (30 minutes)
+        const val SEGMENT_DURATION_MS = 1_800_000L
+    }
+
     // Current show and stream being played
     var currentShow: RadioShow? = null
         private set
@@ -164,9 +169,19 @@ class PlaybackController(
      * @param positionMs Position in milliseconds
      */
     fun seekTo(positionMs: Long) {
-        Log.d(tag, "seekTo: $positionMs")
-        if (player.isCurrentMediaItemSeekable) {
-            player.seekTo(positionMs)
+        val segmentCount = currentStream?.playlist?.size ?: 1
+        if (segmentCount > 1) {
+            val segmentIndex = (positionMs / SEGMENT_DURATION_MS)
+                .toInt()
+                .coerceIn(0, segmentCount - 1)
+            val offsetWithinSegment = positionMs % SEGMENT_DURATION_MS
+            Log.d(tag, "seekTo: ${positionMs}ms → segment $segmentIndex @ ${offsetWithinSegment}ms")
+            player.seekTo(segmentIndex, offsetWithinSegment)
+        } else {
+            Log.d(tag, "seekTo: ${positionMs}ms (single segment)")
+            if (player.isCurrentMediaItemSeekable) {
+                player.seekTo(positionMs)
+            }
         }
     }
 

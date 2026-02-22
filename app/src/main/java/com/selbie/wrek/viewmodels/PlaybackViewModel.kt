@@ -25,6 +25,7 @@ import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.repository.SettingsRepository
 import com.selbie.wrek.data.repository.ShowRepository
 import com.selbie.wrek.service.MediaPlaybackService
+import com.selbie.wrek.service.PlaybackController
 import com.selbie.wrek.utils.NetworkMonitor
 import com.selbie.wrek.utils.StreamSelector
 import kotlinx.coroutines.Job
@@ -209,8 +210,17 @@ class PlaybackViewModel(
         } else {
             currentStreamUrls.firstOrNull() ?: ""
         }
-        val position = controller.currentPosition
-        val duration = if (controller.duration != C.TIME_UNSET) controller.duration else null
+        val segmentCount = currentStreamUrls.size
+        val position = if (segmentCount > 1) {
+            (currentIndex.toLong() * PlaybackController.SEGMENT_DURATION_MS) + controller.currentPosition
+        } else {
+            controller.currentPosition
+        }
+        val duration = if (segmentCount > 1) {
+            segmentCount.toLong() * PlaybackController.SEGMENT_DURATION_MS
+        } else {
+            if (controller.duration != C.TIME_UNSET) controller.duration else null
+        }
 
         when (playerState) {
             Player.STATE_IDLE -> {
@@ -405,8 +415,18 @@ class PlaybackViewModel(
      */
     fun seekTo(positionMs: Long) {
         viewModelScope.launch {
-            Log.d(tag, "seekTo: $positionMs")
-            mediaController?.seekTo(positionMs)
+            val segmentCount = currentStreamUrls.size
+            if (segmentCount > 1) {
+                val segmentIndex = (positionMs / PlaybackController.SEGMENT_DURATION_MS)
+                    .toInt()
+                    .coerceIn(0, segmentCount - 1)
+                val offsetWithinSegment = positionMs % PlaybackController.SEGMENT_DURATION_MS
+                Log.d(tag, "seekTo: ${positionMs}ms → segment $segmentIndex @ ${offsetWithinSegment}ms")
+                mediaController?.seekTo(segmentIndex, offsetWithinSegment)
+            } else {
+                Log.d(tag, "seekTo: ${positionMs}ms (single segment)")
+                mediaController?.seekTo(positionMs)
+            }
         }
     }
 
