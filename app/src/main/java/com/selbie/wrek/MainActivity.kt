@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -37,6 +38,7 @@ import com.selbie.wrek.ui.components.ShowListItem
 import com.selbie.wrek.ui.screens.AboutScreen
 import com.selbie.wrek.ui.screens.SettingsScreen
 import com.selbie.wrek.ui.theme.WrekTheme
+import com.selbie.wrek.utils.BuildUtils
 import com.selbie.wrek.utils.NetworkMonitor
 import com.selbie.wrek.viewmodels.MainViewModel
 import com.selbie.wrek.viewmodels.PlaybackViewModel
@@ -101,6 +103,7 @@ fun WrekApp(
         gesturesEnabled = isMainScreen, // Only enable drawer gestures on main screen
         drawerContent = {
             AppDrawer(
+                versionName = BuildUtils.getBuildString(LocalContext.current),
                 onNavigateToSettings = { navController.navigate("settings") },
                 onNavigateToAbout = { navController.navigate("about") },
                 onCloseDrawer = { scope.launch { drawerState.close() } }

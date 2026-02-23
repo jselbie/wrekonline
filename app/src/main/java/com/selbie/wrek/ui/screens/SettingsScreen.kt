@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.selbie.wrek.R
 import com.selbie.wrek.data.models.BitratePreference
+import com.selbie.wrek.ui.theme.WrekTheme
 import com.selbie.wrek.viewmodels.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,8 +27,20 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit
 ) {
     val settings by viewModel.bitratePreference.collectAsState()
-    val currentPreference = settings.bitratePreference
+    SettingsContent(
+        currentPreference = settings.bitratePreference,
+        onPreferenceChanged = { viewModel.setBitratePreference(it) },
+        onNavigateBack = onNavigateBack
+    )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SettingsContent(
+    currentPreference: BitratePreference,
+    onPreferenceChanged: (BitratePreference) -> Unit,
+    onNavigateBack: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,22 +74,34 @@ fun SettingsScreen(
                 BitrateOption(
                     text = stringResource(R.string.settings_bitrate_auto),
                     selected = currentPreference == BitratePreference.AUTO,
-                    onClick = { viewModel.setBitratePreference(BitratePreference.AUTO) }
+                    onClick = { onPreferenceChanged(BitratePreference.AUTO) }
                 )
 
                 BitrateOption(
                     text = stringResource(R.string.settings_bitrate_best),
                     selected = currentPreference == BitratePreference.BEST,
-                    onClick = { viewModel.setBitratePreference(BitratePreference.BEST) }
+                    onClick = { onPreferenceChanged(BitratePreference.BEST) }
                 )
 
                 BitrateOption(
                     text = stringResource(R.string.settings_bitrate_modest),
                     selected = currentPreference == BitratePreference.MODEST,
-                    onClick = { viewModel.setBitratePreference(BitratePreference.MODEST) }
+                    onClick = { onPreferenceChanged(BitratePreference.MODEST) }
                 )
             }
         }
+    }
+}
+
+@Preview(name = "Settings Screen")
+@Composable
+private fun PreviewSettingsScreen() {
+    WrekTheme {
+        SettingsContent(
+            currentPreference = BitratePreference.AUTO,
+            onPreferenceChanged = {},
+            onNavigateBack = {}
+        )
     }
 }
 

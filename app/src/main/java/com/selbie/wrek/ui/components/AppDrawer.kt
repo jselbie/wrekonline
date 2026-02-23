@@ -1,6 +1,5 @@
 package com.selbie.wrek.ui.components
 
-import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -13,9 +12,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.selbie.wrek.R
-import com.selbie.wrek.utils.BuildUtils
+import com.selbie.wrek.ui.theme.WrekTheme
 import com.selbie.wrek.utils.openUrl
 
 /**
@@ -23,6 +23,7 @@ import com.selbie.wrek.utils.openUrl
  */
 @Composable
 fun AppDrawer(
+    versionName: String,
     onNavigateToSettings: () -> Unit,
     onNavigateToAbout: () -> Unit,
     onCloseDrawer: () -> Unit
@@ -78,9 +79,8 @@ fun AppDrawer(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        val versionName = BuildUtils.getBuildString(context)
         Text(
-            text = stringResource(R.string.nav_version, versionName ?: ""),
+            text = stringResource(R.string.nav_version, versionName),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
             modifier = Modifier.padding(horizontal = 28.dp, vertical = 16.dp)
@@ -88,3 +88,15 @@ fun AppDrawer(
     }
 }
 
+@Preview(name = "App Drawer")
+@Composable
+private fun PreviewAppDrawer() {
+    WrekTheme {
+        AppDrawer(
+            versionName = "2.0.1",
+            onNavigateToSettings = {},
+            onNavigateToAbout = {},
+            onCloseDrawer = {}
+        )
+    }
+}
