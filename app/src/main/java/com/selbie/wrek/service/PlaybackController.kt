@@ -1,19 +1,16 @@
 package com.selbie.wrek.service
 
 import android.content.Context
-import android.util.Log
 import android.net.Uri
+import android.util.Log
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.common.Metadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.extractor.metadata.icy.IcyInfo
 import com.selbie.wrek.R
-import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
 
