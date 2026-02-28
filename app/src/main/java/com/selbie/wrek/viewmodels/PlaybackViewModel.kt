@@ -405,7 +405,7 @@ class PlaybackViewModel(
      */
     fun seekTo(positionMs: Long) {
         viewModelScope.launch {
-            Log.d(tag, "seekTo: $positionMs")
+            Log.d(tag, "seekTo: ${positionMs}ms")
             mediaController?.seekTo(positionMs)
         }
     }

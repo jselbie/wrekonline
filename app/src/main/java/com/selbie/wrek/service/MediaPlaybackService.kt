@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.media3.common.Player
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionCommand
@@ -75,6 +76,31 @@ class MediaPlaybackService : MediaSessionService() {
      * MediaSession callback handling playback commands.
      */
     private val sessionCallback = object : MediaSession.Callback {
+        override fun onPlayerCommandRequest(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo,
+            playerCommand: Int
+        ): Int {
+            // For live streams, intercept COMMAND_PLAY_PAUSE when the player is paused
+            // (i.e. the user is pressing play to resume). Rather than resuming from the
+            // stale buffer position — which could be minutes behind the live edge —
+            // reconnect fresh. This way the notification persists naturally when paused
+            // (standard behavior) and resuming always returns to the current broadcast.
+            if (playerCommand == Player.COMMAND_PLAY_PAUSE &&
+                playbackController.currentStream?.isLiveStream == true &&
+                !playbackController.player.isPlaying
+            ) {
+                val show = playbackController.currentShow
+                val stream = playbackController.currentStream
+                if (show != null && stream != null) {
+                    Log.d(tag, "Intercepting PLAY on paused live stream — reconnecting to live edge")
+                    playbackController.loadAndPlay(show, stream)
+                }
+                return SessionResult.RESULT_ERROR_NOT_SUPPORTED
+            }
+            return super.onPlayerCommandRequest(session, controller, playerCommand)
+        }
+
         override fun onConnect(
             session: MediaSession,
             controller: MediaSession.ControllerInfo

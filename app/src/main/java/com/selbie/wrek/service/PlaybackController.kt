@@ -44,7 +44,7 @@ class PlaybackController(
                 Player.STATE_ENDED -> "ENDED"
                 else -> "UNKNOWN"
             }
-            Log.d(tag, "Player state: $stateName, isPlaying=${player.isPlaying}")
+            Log.d(tag, "Player state: $stateName, isPlaying=${exoPlayer.isPlaying}")
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -67,12 +67,14 @@ class PlaybackController(
         }
     }
 
-    val player: ExoPlayer = ExoPlayer.Builder(context)
+    private val exoPlayer: ExoPlayer = ExoPlayer.Builder(context)
         .setAudioAttributes(audioAttributes, /* handleAudioFocus = */ true)
         .build()
         .apply {
             addListener(playerListener)
         }
+
+    val player: SegmentAwarePlayer = SegmentAwarePlayer(exoPlayer)
 
     /**
      * Loads a show's stream and starts playback.
@@ -88,7 +90,8 @@ class PlaybackController(
         currentStream = stream
 
         // Clear existing playlist
-        player.clearMediaItems()
+        exoPlayer.clearMediaItems()
+        player.playlistTimes = stream.playlistTimes
 
         // Add all URLs from the stream's playlist with metadata
         stream.playlist.forEachIndexed { index, url ->
@@ -114,12 +117,12 @@ class PlaybackController(
                 .setMediaMetadata(metadata)
                 .build()
 
-            player.addMediaItem(mediaItem)
+            exoPlayer.addMediaItem(mediaItem)
         }
 
         // Prepare and play - Media3 will automatically show notification
-        player.prepare()
-        player.playWhenReady = true
+        exoPlayer.prepare()
+        exoPlayer.playWhenReady = true
 
         Log.d(tag, "Player prepared and playing - Media3 will show notification")
     }
@@ -152,19 +155,9 @@ class PlaybackController(
         Log.d(tag, "stop")
         player.stop()
         player.clearMediaItems()
+        player.playlistTimes = null
         currentShow = null
         currentStream = null
-    }
-
-    /**
-     * Seeks to a specific position (only for pre-recorded content).
-     * @param positionMs Position in milliseconds
-     */
-    fun seekTo(positionMs: Long) {
-        Log.d(tag, "seekTo: $positionMs")
-        if (player.isCurrentMediaItemSeekable) {
-            player.seekTo(positionMs)
-        }
     }
 
     /**
@@ -172,8 +165,8 @@ class PlaybackController(
      */
     fun release() {
         Log.d(tag, "release")
-        player.removeListener(playerListener)
-        player.release()
+        exoPlayer.removeListener(playerListener)
+        exoPlayer.release()
     }
 
 }
