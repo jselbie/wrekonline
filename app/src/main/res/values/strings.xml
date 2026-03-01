@@ -64,4 +64,5 @@
     <string name="error_service_unavailable">Service not available</string>
     <string name="error_start_playback">Failed to start playback</string>
     <string name="error_load_schedule">Unable to load schedule. Check your connection.</string>
+    <string name="error_schedule_no_valid_shows">Unable to load schedule. No shows could be validated.</string>
 </resources>

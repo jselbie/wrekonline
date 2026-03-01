@@ -131,11 +131,13 @@ fun ShowListItem(
                     color = textColor
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = show.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = textColor
-                )
+                show.description?.let { desc ->
+                    Text(
+                        text = desc,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = textColor
+                    )
+                }
                 show.creationTime?.let { timeStr ->
                     val formatted = remember(timeStr) {
                         formatCreationTime(timeStr)

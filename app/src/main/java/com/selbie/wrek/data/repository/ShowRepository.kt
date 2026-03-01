@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.selbie.wrek.R
 import com.selbie.wrek.data.models.RadioShow
+import com.selbie.wrek.utils.ScheduleValidator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,9 +43,16 @@ class ShowRepository(private val context: Context) {
                 URL(SCHEDULE_URL).readText()
             }
             val response = json.decodeFromString<ScheduleResponse>(text)
-            Log.d(TAG, "Fetched ${response.schedule.size} shows")
-            _shows.value = response.schedule
-            _state.value = ScheduleState.Success(response.schedule)
+            val validShows = ScheduleValidator.validate(response.schedule)
+            Log.d(TAG, "Fetched ${response.schedule.size} shows, ${validShows.size} passed validation")
+            if (validShows.isEmpty()) {
+                Log.e(TAG, "No valid shows after validation — schedule may be malformed")
+                _shows.value = emptyList()
+                _state.value = ScheduleState.Error(context.getString(R.string.error_schedule_no_valid_shows))
+                return
+            }
+            _shows.value = validShows
+            _state.value = ScheduleState.Success(validShows)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to fetch schedule", e)
             _shows.value = emptyList()
