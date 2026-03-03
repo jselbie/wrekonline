@@ -15,11 +15,3 @@ data class RadioShow(
     val logoUrl: String?,
     val logoBlurHash: String?      // For progressive loading
 ) : Parcelable
-
-// Extension function for ID generation
-fun String.toShowId(): String {
-    return this.lowercase()
-        .replace(Regex("[^a-z0-9\\s-]"), "")
-        .replace(Regex("\\s+"), "-")
-        .trim('-')
-}

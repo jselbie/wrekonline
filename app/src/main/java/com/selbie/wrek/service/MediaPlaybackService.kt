@@ -139,8 +139,13 @@ class MediaPlaybackService : MediaSessionService() {
 
                     if (show != null && stream != null) {
                         Log.d(tag, "LOAD_AND_PLAY: ${show.title}")
-                        playbackController.loadAndPlay(show, stream)
-                        return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+                        return try {
+                            playbackController.loadAndPlay(show, stream)
+                            Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+                        } catch (e: Exception) {
+                            Log.e(tag, "LOAD_AND_PLAY failed for '${show.title}': ${e.message}", e)
+                            Futures.immediateFuture(SessionResult(SessionResult.RESULT_ERROR_UNKNOWN))
+                        }
                     } else {
                         Log.e(tag, "LOAD_AND_PLAY missing show or stream")
                         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_ERROR_BAD_VALUE))

@@ -10,8 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.net.HttpURLConnection
 import java.net.URL
 
 private const val TAG = "ShowRepository"
@@ -40,7 +42,11 @@ class ShowRepository(private val context: Context) {
         _state.value = ScheduleState.Loading
         try {
             val text = withContext(Dispatchers.IO) {
-                URL(SCHEDULE_URL).readText()
+                val connection = (URL(SCHEDULE_URL).openConnection() as HttpURLConnection).apply {
+                    connectTimeout = 30000 // 30 seconds
+                    readTimeout    = 30000 // 30 seconds
+                }
+                connection.inputStream.bufferedReader().use { it.readText() }
             }
             val response = json.decodeFromString<ScheduleResponse>(text)
             val validShows = ScheduleValidator.validate(response.schedule)
@@ -53,6 +59,10 @@ class ShowRepository(private val context: Context) {
             }
             _shows.value = validShows
             _state.value = ScheduleState.Success(validShows)
+        } catch (e: SerializationException) {
+            Log.e(TAG, "Schedule data is malformed", e)
+            _shows.value = emptyList()
+            _state.value = ScheduleState.Error(context.getString(R.string.error_schedule_invalid_data))
         } catch (e: Exception) {
             Log.e(TAG, "Failed to fetch schedule", e)
             _shows.value = emptyList()

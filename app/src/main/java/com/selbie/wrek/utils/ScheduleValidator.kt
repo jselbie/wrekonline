@@ -1,6 +1,7 @@
 package com.selbie.wrek.utils
 
 import android.util.Log
+import android.webkit.URLUtil
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
 
@@ -22,6 +23,22 @@ object ScheduleValidator {
             return null
         }
 
+        val sanitizedLogoUrl = if (show.logoUrl != null &&
+            !URLUtil.isHttpUrl(show.logoUrl) && !URLUtil.isHttpsUrl(show.logoUrl)
+        ) {
+            Log.w(TAG, "Show '${show.id}': invalid logoUrl scheme '${show.logoUrl}' — setting to null")
+            null
+        } else {
+            show.logoUrl
+        }
+
+        val sanitizedBlurHash = if (show.logoBlurHash != null && show.logoBlurHash.length > 200) {
+            Log.w(TAG, "Show '${show.id}': logoBlurHash length ${show.logoBlurHash.length} exceeds maximum — setting to null")
+            null
+        } else {
+            show.logoBlurHash
+        }
+
         val validStreams = show.streams.mapNotNull { stream -> validateStream(stream, show.id) }
 
         if (validStreams.isEmpty()) {
@@ -29,8 +46,7 @@ object ScheduleValidator {
             return null
         }
 
-        return if (validStreams.size == show.streams.size) show
-               else show.copy(streams = validStreams)
+        return show.copy(logoUrl = sanitizedLogoUrl, logoBlurHash = sanitizedBlurHash, streams = validStreams)
     }
 
     private fun validateStream(stream: Stream, showId: String): Stream? {
@@ -42,6 +58,14 @@ object ScheduleValidator {
             Log.e(TAG, "Filtering stream for show '$showId': bitrate=${stream.bitrate}kbps has empty playlist")
             return null
         }
+
+        for (url in stream.playlist) {
+            if (!URLUtil.isHttpUrl(url) && !URLUtil.isHttpsUrl(url)) {
+                Log.e(TAG, "Filtering stream for show '$showId': invalid URL scheme in playlist: '$url'")
+                return null
+            }
+        }
+
         if (stream.playlistTimes != null && stream.playlistTimes.size != stream.playlist.size) {
             Log.e(TAG, "Filtering stream for show '$showId': bitrate=${stream.bitrate}kbps " +
                 "playlistTimes length (${stream.playlistTimes.size}) != playlist length (${stream.playlist.size})")

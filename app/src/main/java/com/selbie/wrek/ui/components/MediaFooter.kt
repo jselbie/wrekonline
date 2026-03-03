@@ -179,6 +179,7 @@ fun MediaFooter(
 }
 
 private fun formatTime(ms: Long): String {
+    if (ms <= 0L) return "0:00"
     val totalSeconds = ms / 1000
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60

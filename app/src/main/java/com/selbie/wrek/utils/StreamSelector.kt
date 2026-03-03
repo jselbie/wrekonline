@@ -14,8 +14,8 @@ object StreamSelector {
             return null
         }
         val streamsSorted = streams.sortedBy { it.bitrate }
-        val streamsEligible = streams.filter { it.bitrate <= preferredBitrate }
-        val streamsInelligible = streams.filter { it.bitrate > preferredBitrate }
+        val streamsEligible = streamsSorted.filter { it.bitrate <= preferredBitrate }
+        val streamsInelligible = streamsSorted.filter { it.bitrate > preferredBitrate }
         val bestStream = streamsEligible.lastOrNull() ?: streamsInelligible.firstOrNull()
         return bestStream
     }

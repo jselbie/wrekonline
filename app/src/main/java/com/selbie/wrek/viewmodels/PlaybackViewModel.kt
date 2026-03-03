@@ -214,7 +214,12 @@ class PlaybackViewModel(
 
         when (playerState) {
             Player.STATE_IDLE -> {
-                _playbackState.value = PlaybackState.Idle
+                // Don't overwrite an error state. When loadAndPlay() fails (e.g. unsupported
+                // URL format), the error result arrives via IPC and sets PlaybackState.Error.
+                // A subsequent STATE_IDLE from ExoPlayer's internal cleanup must not clobber it.
+                if (_playbackState.value !is PlaybackState.Error) {
+                    _playbackState.value = PlaybackState.Idle
+                }
             }
 
             Player.STATE_BUFFERING -> {
@@ -248,7 +253,14 @@ class PlaybackViewModel(
             }
 
             Player.STATE_ENDED -> {
-                _playbackState.value = PlaybackState.Stopped(show)
+                // Don't overwrite an error state. When loadAndPlay() fails mid-switch
+                // (while another show was playing), clearMediaItems() fires STATE_ENDED on
+                // the old player — this arrives via IPC after the error result has already
+                // set PlaybackState.Error, and would otherwise overwrite it with Stopped.
+                // We still clear currentShow so the ViewModel is in a clean state.
+                if (_playbackState.value !is PlaybackState.Error) {
+                    _playbackState.value = PlaybackState.Stopped(show)
+                }
                 currentShow = null
                 currentStreamUrls = emptyList()
                 stopPositionUpdates()
