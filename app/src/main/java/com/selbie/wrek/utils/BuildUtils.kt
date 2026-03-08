@@ -15,7 +15,9 @@ object BuildUtils {
         }
         val versionNameBase = pi.versionName ?: ""
 
-        return "$versionNameBase.$versionCode"
+        val isBeta = true
+        val releaseModifier = if (isBeta) " (Beta)" else ""
+        return "$versionNameBase.$versionCode $releaseModifier"
     }
 
 }
