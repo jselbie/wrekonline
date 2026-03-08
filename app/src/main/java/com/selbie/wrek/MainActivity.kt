@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.CellTower
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
@@ -226,10 +226,10 @@ fun MainScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
-                            imageVector = Icons.Default.Warning,
+                            imageVector = Icons.Default.CellTower,
                             contentDescription = null,
                             modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.error
+                            tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
