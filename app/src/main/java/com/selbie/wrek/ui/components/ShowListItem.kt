@@ -90,7 +90,7 @@ fun ShowListItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
+                .height(140.dp)
         ) {
             // Background image layer
             show.logoUrl?.let { url ->

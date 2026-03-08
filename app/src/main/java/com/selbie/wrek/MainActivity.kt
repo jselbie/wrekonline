@@ -21,7 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -171,7 +173,8 @@ fun MainScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.app_name),
-                        fontFamily = FontFamily(Font(R.font.metro_df))
+                        fontFamily = FontFamily(Font(R.font.metro_df)),
+                        fontSize = with(LocalDensity.current) { 22.dp.toSp() }
                     )
                 },
                 navigationIcon = {

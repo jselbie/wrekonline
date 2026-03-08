@@ -13,7 +13,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.selbie.wrek.R
 import com.selbie.wrek.ui.theme.WrekTheme
 import com.selbie.wrek.utils.openUrl
@@ -37,6 +39,7 @@ fun AppDrawer(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.titleLarge,
             fontFamily = FontFamily(Font(R.font.metro_df)),
+            fontSize = with(LocalDensity.current) { 22.dp.toSp() },
             modifier = Modifier.padding(horizontal = 28.dp, vertical = 16.dp)
         )
 
