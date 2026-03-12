@@ -157,6 +157,7 @@ fun MainScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val playbackState by playbackViewModel.playbackState.collectAsState()
+    val albumArtUrl by playbackViewModel.albumArtUrl.collectAsState()
 
     // Derive effective selected show: explicit UI selection takes priority,
     // otherwise fall back to the show currently being played by the service
@@ -190,6 +191,7 @@ fun MainScreen(
         bottomBar = {
             MediaFooter(
                 playbackState = playbackState,
+                albumArtUrl = albumArtUrl,
                 onPlayPauseToggle = {
                     when (playbackState) {
                         is PlaybackState.Playing -> {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -90,7 +91,7 @@ fun ShowListItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp)
+                .defaultMinSize(minHeight = 140.dp)
         ) {
             // Background image layer
             show.logoUrl?.let { url ->
@@ -103,7 +104,7 @@ fun ShowListItem(
                 AsyncImage(
                     model = url,
                     contentDescription = stringResource(R.string.cd_show_logo, show.title),
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.Crop,
                     error = placeholder,
                     placeholder = placeholder,
@@ -159,7 +160,10 @@ fun ShowListItem(
 private val isoParser = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 private val displayFormatter = DateTimeFormatter.ofPattern("EEE M/d h:mm a", Locale.US)
 
-private fun formatCreationTime(isoString: String): String? {
+private fun formatCreationTime(isoString: String?): String? {
+    if (isoString == null) {
+        return null
+    }
     return try {
         val dt = LocalDateTime.parse(isoString, isoParser)
         dt.format(displayFormatter)

@@ -33,7 +33,7 @@ sealed class PlaybackState {
         val position: Long,
         val duration: Long?,
         val isLiveStream: Boolean,
-        val songTitle: String? = null
+        val songMetadata: SongMetadata? = null
     ) : PlaybackState()
 
     /**
@@ -52,7 +52,7 @@ sealed class PlaybackState {
         val position: Long,
         val duration: Long?,
         val isLiveStream: Boolean,
-        val songTitle: String? = null
+        val songMetadata: SongMetadata? = null
     ) : PlaybackState()
 
     /**

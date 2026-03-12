@@ -22,9 +22,11 @@ import com.google.common.util.concurrent.MoreExecutors
 import com.selbie.wrek.R
 import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
+import com.selbie.wrek.data.models.SongMetadata
 import com.selbie.wrek.data.repository.SettingsRepository
 import com.selbie.wrek.data.repository.ShowRepository
 import com.selbie.wrek.service.MediaPlaybackService
+import com.selbie.wrek.utils.AlbumArtRepository
 import com.selbie.wrek.utils.NetworkMonitor
 import com.selbie.wrek.utils.StreamSelector
 import kotlinx.coroutines.Job
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * ViewModel for managing media playback.
@@ -53,6 +56,13 @@ class PlaybackViewModel(
     private val _playbackState = MutableStateFlow<PlaybackState>(PlaybackState.Idle)
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
+    // Album art URL fetched from Last.fm for the current ICY metadata
+    private val _albumArtUrl = MutableStateFlow<String?>(null)
+    val albumArtUrl: StateFlow<String?> = _albumArtUrl.asStateFlow()
+
+    private val albumArtRepository = AlbumArtRepository()
+    private var albumArtJob: Job? = null
+
     // MediaController for communicating with MediaPlaybackService
     private var mediaController: MediaController? = null
     private var controllerFuture: ListenableFuture<MediaController>? = null
@@ -62,8 +72,20 @@ class PlaybackViewModel(
     private var currentStreamUrls: List<String> = emptyList()
     private var isLiveStream: Boolean = false
 
-    // Dynamic song title from ICY metadata (live streams)
-    private var currentSongTitle: String? = null
+    // Parsed ICY metadata (live streams)
+    private var currentSongMetadata: SongMetadata? = null
+
+    // Matches: 'Song Title' by Artist Name
+    private val metadataRegex = Regex("^'(.+)' by (.+)$")
+
+    private fun parseMetadata(title: String): SongMetadata {
+        val match = metadataRegex.find(title.trim())
+        return if (match != null) {
+            SongMetadata(track = match.groupValues[1], artist = match.groupValues[2])
+        } else {
+            SongMetadata(track = title.trim(), artist = "")
+        }
+    }
 
     // Position polling for smooth seekbar updates
     private var positionUpdateJob: Job? = null
@@ -104,8 +126,24 @@ class PlaybackViewModel(
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
             val title = mediaMetadata.title?.toString()
             Log.d(tag, "Media metadata changed: title=$title")
-            currentSongTitle = title
+            currentSongMetadata = title?.takeIf { it.isNotBlank() }?.let { parseMetadata(it) }
             updatePlaybackStateFromPlayer()
+
+            // Fetch album art for new ICY metadata (live streams only).
+            // Keep the previous art visible while fetching; fall back to null (logoUrl in UI)
+            // if the fetch takes longer than 5 seconds or returns no result.
+            albumArtJob?.cancel()
+            val song = currentSongMetadata
+            if (song != null && isLiveStream) {
+                albumArtJob = viewModelScope.launch {
+                    val newUrl = withTimeoutOrNull(5_000) {
+                        albumArtRepository.getAlbumArtUrl(song)
+                    }
+                    _albumArtUrl.value = newUrl
+                }
+            } else {
+                _albumArtUrl.value = null
+            }
         }
 
         override fun onPlayerError(error: PlaybackException) {
@@ -235,7 +273,7 @@ class PlaybackViewModel(
                         position = position,
                         duration = duration,
                         isLiveStream = isLiveStream,
-                        songTitle = currentSongTitle
+                        songMetadata = currentSongMetadata
                     )
                     startPositionUpdates()
                 } else {
@@ -246,7 +284,7 @@ class PlaybackViewModel(
                         position = position,
                         duration = duration,
                         isLiveStream = isLiveStream,
-                        songTitle = currentSongTitle
+                        songMetadata = currentSongMetadata
                     )
                     stopPositionUpdates()
                 }
@@ -340,7 +378,9 @@ class PlaybackViewModel(
             currentShow = show
             currentStreamUrls = stream.playlist
             isLiveStream = stream.isLiveStream
-            currentSongTitle = null
+            currentSongMetadata = null
+            albumArtJob?.cancel()
+            _albumArtUrl.value = null
 
             // Send custom command to service
             val controller = mediaController
@@ -427,6 +467,8 @@ class PlaybackViewModel(
         Log.d(tag, "onCleared")
 
         stopPositionUpdates()
+        albumArtJob?.cancel()
+        albumArtJob = null
         // Remove listener and release MediaController
         mediaController?.removeListener(playerListener)
         mediaController?.release()
