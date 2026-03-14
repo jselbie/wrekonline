@@ -13,11 +13,12 @@ android {
     compileSdk = 36
 
     defaultConfig {
+        val IS_BETA = true  // SET THIS TO TRUE FOR BETA, FALSE FOR RELEASE
         applicationId = "com.selbie.wrek"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20
-        versionName = "2.0"
+        versionCode = 21
+        versionName = "2.0.$versionCode" + (if (IS_BETA) " (Beta)" else "")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -32,6 +33,7 @@ android {
             logger.warn("WARNING: LASTFM_API_KEY is not set. Album art will be disabled.")
         }
         buildConfigField("String", "LASTFM_API_KEY", "\"$lastFmKey\"")
+        buildConfigField("boolean", "IS_BETA", IS_BETA.toString())
     }
 
     buildTypes {

@@ -105,7 +105,7 @@ fun WrekApp(
         gesturesEnabled = isMainScreen, // Only enable drawer gestures on main screen
         drawerContent = {
             AppDrawer(
-                versionName = BuildUtils.getBuildString(LocalContext.current),
+                versionName = BuildConfig.VERSION_NAME,
                 onNavigateToSettings = { navController.navigate("settings") },
                 onNavigateToAbout = { navController.navigate("about") },
                 onCloseDrawer = { scope.launch { drawerState.close() } }

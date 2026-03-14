@@ -2,6 +2,8 @@ package com.selbie.wrek.service
 
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -21,7 +23,17 @@ import com.selbie.wrek.data.models.Stream
 class PlaybackController(
     private val context: Context
 ) {
+    companion object {
+        const val PAUSE_TIMEOUT_MS = 30L * 60 * 1000  // 30 minutes
+    }
+
     private val tag = "PlaybackController"
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val pauseTimeoutRunnable = Runnable {
+        Log.d(tag, "Pause timeout elapsed — stopping playback")
+        stop()
+    }
 
     // Current show and stream being played
     var currentShow: RadioShow? = null
@@ -45,10 +57,18 @@ class PlaybackController(
                 else -> "UNKNOWN"
             }
             Log.d(tag, "Player state: $stateName, isPlaying=${exoPlayer.isPlaying}")
+            if (playbackState != Player.STATE_READY) {
+                cancelPauseTimeout()
+            }
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             Log.d(tag, "isPlaying: $isPlaying")
+            if (!isPlaying && exoPlayer.playbackState == Player.STATE_READY) {
+                startPauseTimeout()
+            } else {
+                cancelPauseTimeout()
+            }
         }
 
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -76,6 +96,21 @@ class PlaybackController(
 
     val player: SegmentAwarePlayer = SegmentAwarePlayer(exoPlayer)
 
+    private fun startPauseTimeout() {
+        cancelPauseTimeoutInternal()
+        Log.d(tag, "Starting pause timeout (${PAUSE_TIMEOUT_MS / 1000}s)")
+        handler.postDelayed(pauseTimeoutRunnable, PAUSE_TIMEOUT_MS)
+    }
+
+    private fun cancelPauseTimeoutInternal() {
+        handler.removeCallbacks(pauseTimeoutRunnable)
+    }
+
+    private fun cancelPauseTimeout() {
+        Log.d(tag, "Cancelling pause timeout")
+        cancelPauseTimeoutInternal()
+    }
+
     /**
      * Loads a show's stream and starts playback.
      * Clears existing playlist, adds all URLs from the stream, prepares, and plays.
@@ -85,6 +120,7 @@ class PlaybackController(
      */
     fun loadAndPlay(show: RadioShow, stream: Stream) {
         Log.d(tag, "loadAndPlay: ${show.title}, ${stream.bitrate}kbps, ${stream.playlist.size} URLs")
+        cancelPauseTimeout()
 
         currentShow = show
         currentStream = stream
@@ -153,6 +189,7 @@ class PlaybackController(
      */
     fun stop() {
         Log.d(tag, "stop")
+        cancelPauseTimeout()
         player.stop()
         player.clearMediaItems()
         player.playlistTimes = null
@@ -165,6 +202,7 @@ class PlaybackController(
      */
     fun release() {
         Log.d(tag, "release")
+        cancelPauseTimeout()
         exoPlayer.removeListener(playerListener)
         exoPlayer.release()
     }
