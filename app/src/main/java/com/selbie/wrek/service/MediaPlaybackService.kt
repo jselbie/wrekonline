@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.media3.common.Player
+import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionCommand
@@ -12,6 +13,7 @@ import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.selbie.wrek.MainActivity
+import com.selbie.wrek.R
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
 
@@ -47,6 +49,13 @@ class MediaPlaybackService : MediaSessionService() {
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Use WREK logo as the small icon in the media notification
+        setMediaNotificationProvider(
+            DefaultMediaNotificationProvider(this).apply {
+                setSmallIcon(R.drawable.wrek_round_exp2)
+            }
         )
 
         // Create MediaSession - Media3 will automatically show notification when playing
