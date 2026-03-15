@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# kotlinx.serialization - keep @Serializable model classes
+-keepattributes *Annotation*
+-keep class com.selbie.wrek.data.models.** { *; }
+-keepclassmembers class com.selbie.wrek.data.models.** { *; }
+
+# Readable stack traces in crash reports
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
