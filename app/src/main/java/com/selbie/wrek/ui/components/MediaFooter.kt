@@ -1,5 +1,6 @@
 package com.selbie.wrek.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.selbie.wrek.BuildConfig
 import com.selbie.wrek.R
 import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
@@ -227,7 +230,7 @@ fun MediaFooter(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = liveSongMetadata?.track ?: "",
+                                text = liveSongMetadata?.track ?: albumArtShow?.title ?: "",
                                 style = MaterialTheme.typography.bodyLarge.copy(lineHeight = 20.sp),
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
@@ -246,6 +249,24 @@ fun MediaFooter(
 
                         // Right: album art, full footer height, no padding
                         if (isActiveLiveStream) {
+                            // Remembers the last successfully fetched album art URL,
+                            // resetting when the show changes so we never show stale art
+                            // from a previous show.
+                            var lastSuccessUrl by remember(albumArtShow?.id) { mutableStateOf<String?>(null) }
+                            LaunchedEffect(albumArtUrl) {
+                                if (albumArtUrl != null) lastSuccessUrl = albumArtUrl
+                            }
+                            val logoFallback = coil.compose.rememberAsyncImagePainter(albumArtShow?.logoUrl)
+
+                            if (BuildConfig.DEBUG) {
+                                LaunchedEffect(albumArtUrl, albumArtShow?.logoUrl, lastSuccessUrl) {
+                                    Log.d(
+                                        "MediaFooter",
+                                        "AsyncImage:   albumArtUrl=$albumArtUrl   logoUrl=${albumArtShow?.logoUrl}   lastSuccessUrl=$lastSuccessUrl"
+                                    )
+                                }
+                            }
+
                             AsyncImage(
                                 model = albumArtUrl ?: albumArtShow?.logoUrl,
                                 contentDescription = null,
@@ -253,7 +274,9 @@ fun MediaFooter(
                                     .fillMaxHeight()
                                     .aspectRatio(1f),
                                 contentScale = ContentScale.Crop,
-                                placeholder = coil.compose.rememberAsyncImagePainter(albumArtShow?.logoUrl)
+                                placeholder = coil.compose.rememberAsyncImagePainter(lastSuccessUrl ?: albumArtShow?.logoUrl),
+                                error = logoFallback,
+                                fallback = logoFallback
                             )
                         }
                     }

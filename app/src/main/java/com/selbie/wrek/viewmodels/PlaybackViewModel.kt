@@ -19,6 +19,7 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import com.selbie.wrek.BuildConfig
 import com.selbie.wrek.R
 import com.selbie.wrek.data.models.PlaybackState
 import com.selbie.wrek.data.models.RadioShow
@@ -36,7 +37,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * ViewModel for managing media playback.
@@ -110,9 +110,46 @@ class PlaybackViewModel(
         bindToService()
     }
 
+    // TEST HOOK
+    private val useTestHook = false && BuildConfig.DEBUG
+    private val testHookForFetchingAlbumArt = TestHookForFetchingAlbumArt()
+    private val testHookCallback : (String)->Unit = {meta->
+        handleMetadataChange(meta)
+    }
+    // TEST HOOK
+
+    private fun handleMetadataChange(title: String?) {
+        Log.d(tag, "Media metadata changed: title=$title")
+        currentSongMetadata = title?.takeIf { it.isNotBlank() }?.let { parseMetadata(it) }
+        updatePlaybackStateFromPlayer()
+
+        // Fetch album art for new ICY metadata (live streams only).
+        // The UI holds the previous image as a placeholder while fetching,
+        // and falls back to logoUrl if the fetched URL fails to load.
+        albumArtJob?.cancel()
+        val song = currentSongMetadata
+        if (song != null && isLiveStream) {
+            albumArtJob = viewModelScope.launch {
+                _albumArtUrl.value = albumArtRepository.getAlbumArtUrl(song)
+            }
+        } else {
+            _albumArtUrl.value = null
+        }
+    }
+
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
             updatePlaybackStateFromPlayer()
+
+            // TEST HOOK
+            if (useTestHook) {
+                if (playbackState == Player.STATE_READY) {
+                    testHookForFetchingAlbumArt.startTestHook(testHookCallback)
+                } else {
+                    testHookForFetchingAlbumArt.stopTestHook()
+                }
+            }
+            // TEST HOOK
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -124,26 +161,11 @@ class PlaybackViewModel(
         }
 
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-            val title = mediaMetadata.title?.toString()
-            Log.d(tag, "Media metadata changed: title=$title")
-            currentSongMetadata = title?.takeIf { it.isNotBlank() }?.let { parseMetadata(it) }
-            updatePlaybackStateFromPlayer()
-
-            // Fetch album art for new ICY metadata (live streams only).
-            // Keep the previous art visible while fetching; fall back to null (logoUrl in UI)
-            // if the fetch takes longer than 5 seconds or returns no result.
-            albumArtJob?.cancel()
-            val song = currentSongMetadata
-            if (song != null && isLiveStream) {
-                albumArtJob = viewModelScope.launch {
-                    val newUrl = withTimeoutOrNull(5_000) {
-                        albumArtRepository.getAlbumArtUrl(song)
-                    }
-                    _albumArtUrl.value = newUrl
-                }
-            } else {
-                _albumArtUrl.value = null
+            if (useTestHook && isLiveStream) {
+                return
             }
+            val title = mediaMetadata.title?.toString()
+            handleMetadataChange(title)
         }
 
         override fun onPlayerError(error: PlaybackException) {
@@ -219,7 +241,10 @@ class PlaybackViewModel(
                             currentShow = show
                             currentStreamUrls = stream.playlist
                             isLiveStream = stream.isLiveStream
-                            updatePlaybackStateFromPlayer()
+
+                            // Recover ICY metadata from the already-playing session
+                            val title = controller.mediaMetadata.title?.toString()
+                            handleMetadataChange(title)
                         }
                     } else {
                         Log.d(tag, "No active show to recover")
