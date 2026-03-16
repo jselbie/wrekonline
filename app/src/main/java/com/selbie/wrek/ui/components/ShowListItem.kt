@@ -179,7 +179,7 @@ private val previewShow = RadioShow(
     creationTime = "2026-02-20T21:00:00",
     streams = emptyList(),
     logoUrl = null,
-    logoBlurHash = null
+    logoBlurHash = null,
 )
 
 @Preview(name = "ShowListItem - Unselected")

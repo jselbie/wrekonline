@@ -13,5 +13,6 @@ data class RadioShow(
     val creationTime: String?,     // null for live streams
     val streams: List<Stream>,
     val logoUrl: String?,
-    val logoBlurHash: String?      // For progressive loading
+    val logoBlurHash: String?,      // For progressive loading
+    val albumCoverUrl: String? = null
 ) : Parcelable

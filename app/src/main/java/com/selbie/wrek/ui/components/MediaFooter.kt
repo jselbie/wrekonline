@@ -256,25 +256,30 @@ fun MediaFooter(
                             LaunchedEffect(albumArtUrl) {
                                 if (albumArtUrl != null) lastSuccessUrl = albumArtUrl
                             }
-                            val logoFallback = coil.compose.rememberAsyncImagePainter(albumArtShow?.logoUrl)
+                            val logoFallback = coil.compose.rememberAsyncImagePainter(albumArtShow?.albumCoverUrl ?: albumArtShow?.logoUrl)
 
                             if (BuildConfig.DEBUG) {
-                                LaunchedEffect(albumArtUrl, albumArtShow?.logoUrl, lastSuccessUrl) {
-                                    Log.d(
-                                        "MediaFooter",
-                                        "AsyncImage:   albumArtUrl=$albumArtUrl   logoUrl=${albumArtShow?.logoUrl}   lastSuccessUrl=$lastSuccessUrl"
-                                    )
+                                val logMsg = "AsyncImage:   albumArtUrl=$albumArtUrl   albumCoverUrl=${albumArtShow?.albumCoverUrl}   lastSuccessUrl=$lastSuccessUrl"
+                                var lastLogMsg by remember { mutableStateOf<String?>(null) }
+                                if (logMsg != lastLogMsg) {
+                                    lastLogMsg = logMsg
+                                    Log.d("MediaFooter", logMsg)
                                 }
                             }
 
+                            val requestedUrl = albumArtUrl ?: albumArtShow?.albumCoverUrl ?: albumArtShow?.logoUrl
+                            val placeholderUrl = lastSuccessUrl ?: albumArtShow?.albumCoverUrl ?: albumArtShow?.logoUrl
                             AsyncImage(
-                                model = albumArtUrl ?: albumArtShow?.logoUrl,
+                                model = requestedUrl,
+                                onError = { error ->
+                                    Log.w("MediaFooter", "Image load failed: url=$requestedUrl, error=${error.result.throwable}")
+                                },
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(1f),
                                 contentScale = ContentScale.Crop,
-                                placeholder = coil.compose.rememberAsyncImagePainter(lastSuccessUrl ?: albumArtShow?.logoUrl),
+                                placeholder = coil.compose.rememberAsyncImagePainter(placeholderUrl),
                                 error = logoFallback,
                                 fallback = logoFallback
                             )
@@ -308,7 +313,7 @@ private val previewShow = RadioShow(
     creationTime = null,
     streams = emptyList(),
     logoUrl = null,
-    logoBlurHash = null
+    logoBlurHash = null,
 )
 
 @Preview(name = "Idle")

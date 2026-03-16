@@ -211,6 +211,52 @@ fun AboutScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            // Open Source paragraph
+            val openSourceContext = LocalContext.current
+            val openSourceUrl = "https://github.com/jselbie/wrekonline"
+            val openSourceTemplate = stringResource(R.string.about_open_source, openSourceUrl)
+            val urlStart = openSourceTemplate.indexOf(openSourceUrl)
+            val openSourceText = buildAnnotatedString {
+                append(openSourceTemplate.substring(0, urlStart))
+
+                pushStringAnnotation(
+                    tag = "URL",
+                    annotation = openSourceUrl
+                )
+                withStyle(
+                    style = SpanStyle(
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline
+                    )
+                ) {
+                    append(openSourceUrl)
+                }
+                pop()
+
+                if (urlStart + openSourceUrl.length < openSourceTemplate.length) {
+                    append(openSourceTemplate.substring(urlStart + openSourceUrl.length))
+                }
+            }
+
+            ClickableText(
+                text = openSourceText,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                onClick = { offset ->
+                    openSourceText.getStringAnnotations(
+                        tag = "URL",
+                        start = offset,
+                        end = offset
+                    ).firstOrNull()?.let { annotation ->
+                        openUrl(openSourceContext, annotation.item)
+                    }
+                }
+            )
         }
     }
 }

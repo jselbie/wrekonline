@@ -50,6 +50,7 @@
     <string name="about_feedback_label">Feedback: </string>
     <string name="about_wrek_web_label">Follow WREK on the web: </string>
     <string name="about_wrek_contact_label">Contact WREK: </string>
+    <string name="about_open_source">This software application itself is released as open source. To obtain the software source code and its corresponding license agreement, visit %1$s</string>
 
     <!-- Playback metadata -->
     <string name="playback_artist">WREK Atlanta</string>
