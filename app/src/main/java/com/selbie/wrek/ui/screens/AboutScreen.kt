@@ -138,7 +138,7 @@ fun AboutScreen(
                             textDecoration = TextDecoration.Underline
                         )
                     ) {
-                        append("https://www.wrek.org")
+                        append("www.wrek.org")
                     }
                     pop() // End URL annotation
                 }
@@ -208,6 +208,21 @@ fun AboutScreen(
 
             Text(
                 text = stringResource(R.string.about_wrek_content),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // Licenses Section
+            Text(
+                text = stringResource(R.string.about_licenses_title),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp, bottom = 16.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.about_blurhash_license),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth()
             )
