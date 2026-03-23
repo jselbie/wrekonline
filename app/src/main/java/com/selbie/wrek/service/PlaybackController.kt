@@ -15,13 +15,15 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.selbie.wrek.R
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
+import com.selbie.wrek.data.repository.SettingsRepository
 
 /**
  * Manages ExoPlayer instance and playback operations.
  * Media3 automatically handles notifications based on player state and MediaMetadata.
  */
 class PlaybackController(
-    private val context: Context
+    private val context: Context,
+    private val settingsRepository: SettingsRepository
 ) {
     companion object {
         const val PAUSE_TIMEOUT_MS = 30L * 60 * 1000  // 30 minutes
@@ -31,6 +33,10 @@ class PlaybackController(
 
     private val handler = Handler(Looper.getMainLooper())
     private val pauseTimeoutRunnable = Runnable {
+        if (!settingsRepository.settings.value.autoStop) {
+            Log.d(tag, "Pause timeout fired but autoStop is now disabled — ignoring")
+            return@Runnable
+        }
         Log.d(tag, "Pause timeout elapsed — stopping playback")
         stop()
     }
@@ -97,6 +103,10 @@ class PlaybackController(
     val player: SegmentAwarePlayer = SegmentAwarePlayer(exoPlayer)
 
     private fun startPauseTimeout() {
+        if (!settingsRepository.settings.value.autoStop) {
+            Log.d(tag, "Pause timeout skipped (autoStop disabled)")
+            return
+        }
         cancelPauseTimeoutInternal()
         Log.d(tag, "Starting pause timeout (${PAUSE_TIMEOUT_MS / 1000}s)")
         handler.postDelayed(pauseTimeoutRunnable, PAUSE_TIMEOUT_MS)

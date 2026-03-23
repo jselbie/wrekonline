@@ -30,6 +30,8 @@ fun SettingsScreen(
     SettingsContent(
         currentPreference = settings.bitratePreference,
         onPreferenceChanged = { viewModel.setBitratePreference(it) },
+        autoStop = settings.autoStop,
+        onAutoStopChanged = { viewModel.setAutoStop(it) },
         onNavigateBack = onNavigateBack
     )
 }
@@ -39,6 +41,8 @@ fun SettingsScreen(
 private fun SettingsContent(
     currentPreference: BitratePreference,
     onPreferenceChanged: (BitratePreference) -> Unit,
+    autoStop: Boolean,
+    onAutoStopChanged: (Boolean) -> Unit,
     onNavigateBack: () -> Unit
 ) {
     Scaffold(
@@ -89,6 +93,30 @@ private fun SettingsContent(
                     onClick = { onPreferenceChanged(BitratePreference.MODEST) }
                 )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_auto_stop_title),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Switch(
+                    checked = autoStop,
+                    onCheckedChange = onAutoStopChanged
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.settings_auto_stop_description),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }
@@ -100,6 +128,8 @@ private fun PreviewSettingsScreen() {
         SettingsContent(
             currentPreference = BitratePreference.AUTO,
             onPreferenceChanged = {},
+            autoStop = true,
+            onAutoStopChanged = {},
             onNavigateBack = {}
         )
     }

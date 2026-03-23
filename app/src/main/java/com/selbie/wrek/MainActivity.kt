@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Initialize repositories
-        val settingsRepository = SettingsRepository(applicationContext)
+        val settingsRepository = SettingsRepository.getInstance(applicationContext)
         val showRepository = ShowRepository(applicationContext)
 
         // Initialize network monitor

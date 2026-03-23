@@ -16,6 +16,7 @@ import com.selbie.wrek.MainActivity
 import com.selbie.wrek.R
 import com.selbie.wrek.data.models.RadioShow
 import com.selbie.wrek.data.models.Stream
+import com.selbie.wrek.data.repository.SettingsRepository
 
 /**
  * MediaSessionService for audio playback.
@@ -40,7 +41,7 @@ class MediaPlaybackService : MediaSessionService() {
         Log.d(tag, "onCreate - Media3 will handle notifications automatically")
 
         // Initialize PlaybackController (no callback needed - Media3 handles notifications)
-        playbackController = PlaybackController(this)
+        playbackController = PlaybackController(this, SettingsRepository.getInstance(this))
 
         // Create a PendingIntent to launch MainActivity when notification is tapped
         val intent = Intent(this, MainActivity::class.java).apply {

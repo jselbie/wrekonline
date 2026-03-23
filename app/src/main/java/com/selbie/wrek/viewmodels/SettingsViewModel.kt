@@ -22,6 +22,10 @@ class SettingsViewModel(
         settingsRepository.saveBitratePreference(preference)
     }
 
+    fun setAutoStop(value: Boolean) {
+        settingsRepository.saveAutoStop(value)
+    }
+
     /**
      * Factory for creating SettingsViewModel with dependencies
      */

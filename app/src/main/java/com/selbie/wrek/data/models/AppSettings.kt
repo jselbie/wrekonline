@@ -13,5 +13,6 @@ enum class BitratePreference {
  * Application settings
  */
 data class AppSettings(
-    val bitratePreference: BitratePreference = BitratePreference.AUTO
+    val bitratePreference: BitratePreference = BitratePreference.AUTO,
+    val autoStop: Boolean = true
 )

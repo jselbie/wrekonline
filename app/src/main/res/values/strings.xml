@@ -15,6 +15,8 @@
     <string name="settings_bitrate_auto">Auto (best quality on WiFi)</string>
     <string name="settings_bitrate_best">Best quality (320 kbps)</string>
     <string name="settings_bitrate_modest">Modest quality (128 kbps)</string>
+    <string name="settings_auto_stop_title">Auto-stop</string>
+    <string name="settings_auto_stop_description">Automatically stop streams that have been paused for 30 minutes to conserve battery</string>
 
     <!-- About Screen -->
     <string name="about_title">About</string>

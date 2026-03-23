@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * Repository for managing application settings persistence
  */
-class SettingsRepository(context: Context) {
+class SettingsRepository private constructor(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(
         PREFS_NAME,
@@ -33,7 +33,9 @@ class SettingsRepository(context: Context) {
             else -> BitratePreference.AUTO // Default
         }
 
-        return AppSettings(bitratePreference = bitratePreference)
+        val autoStop = prefs.getBoolean(KEY_AUTO_STOP, true)
+
+        return AppSettings(bitratePreference = bitratePreference, autoStop = autoStop)
     }
 
     /**
@@ -44,11 +46,32 @@ class SettingsRepository(context: Context) {
             .putString(KEY_BITRATE_PREFERENCE, preference.name)
             .apply()
 
-        _settings.value = AppSettings(bitratePreference = preference)
+        _settings.value = _settings.value.copy(bitratePreference = preference)
+    }
+
+    /**
+     * Save auto-stop preference to SharedPreferences
+     */
+    fun saveAutoStop(value: Boolean) {
+        prefs.edit()
+            .putBoolean(KEY_AUTO_STOP, value)
+            .apply()
+
+        _settings.value = _settings.value.copy(autoStop = value)
     }
 
     companion object {
         private const val PREFS_NAME = "wrek_settings"
         private const val KEY_BITRATE_PREFERENCE = "bitrate_preference"
+        private const val KEY_AUTO_STOP = "auto_stop"
+
+        @Volatile
+        private var instance: SettingsRepository? = null
+
+        fun getInstance(context: Context): SettingsRepository {
+            return instance ?: synchronized(this) {
+                instance ?: SettingsRepository(context.applicationContext).also { instance = it }
+            }
+        }
     }
 }

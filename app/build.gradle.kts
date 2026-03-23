@@ -13,11 +13,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        val IS_BETA = true  // SET THIS TO TRUE FOR BETA, FALSE FOR RELEASE
+        val IS_BETA = false  // SET THIS TO TRUE FOR BETA, FALSE FOR RELEASE
         applicationId = "com.selbie.wrek"
         minSdk = 26
         targetSdk = 36
-        versionCode = 21
+        versionCode = 22
         versionName = "2.0.$versionCode" + (if (IS_BETA) " (Beta)" else "")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -44,7 +44,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+
         }
     }
     compileOptions {
